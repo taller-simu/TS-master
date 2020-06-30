@@ -1,0 +1,22 @@
+.heads {
+    margin-top: 1.3rem;
+    margin-left: 1rem;
+}
+.heads a{
+    
+    padding: 7%;
+    font-size: 25px;
+}
+.title{
+    text-align: center;
+    
+    font-size: 45px;
+    font-weight: 500;
+    padding: 20px;
+}
+.grid-head{
+    background-color: aqua;
+}
+.Infectados{
+    padding: 10px;
+}

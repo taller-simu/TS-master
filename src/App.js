@@ -3,6 +3,10 @@ import { HashRouter, Switch, Route } from "react-router-dom";
 import Start from "./start";
 import Graficos from "./graficos";
 import Header from './header';
+
+import {Divider} from 'semantic-ui-react';
+import Simular from "./simular";
+
 class App extends Component {
   render(){
   return (
@@ -10,14 +14,12 @@ class App extends Component {
       <HashRouter >
         <Switch>
           <div>
-          <Header />
-          <Route exact path="/" component={Start} />
-          <Route exact path="/graficos" component={Graficos} />
-          </div>
-
-          
-          
-          
+            <Header />
+            <Divider />
+            <Route exact path="/" component={Start} />
+            <Route exact path="/simular" component={Simular} />
+            <Route exact path="/graficos" component={Graficos} />
+          </div>            
         </Switch>
       </HashRouter>
     

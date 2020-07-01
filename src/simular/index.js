@@ -71,7 +71,7 @@ const Simular = () =>{
                 </div>
                 </GridColumn>
                 <GridColumn>
-                <div class="recuperados" align="center" >
+                <div className="recuperados" align="center" >
                     <h3 class="">Datos historicos de Recuperados</h3>
                     <input type="number" class="" name="" id="" placeholder="recuperados"/><br/>
                     
@@ -113,7 +113,7 @@ const Simular = () =>{
                 </div>
                 </GridColumn>
                 <GridColumn>
-                <div class="Compras" align="center">
+                <div className="Compras" align="center">
                     <h3 class="titulo_compras">Datos Historicos de Fallecidos</h3>
                     <input type="number" class="" name="" id="" placeholder="fallecidos"/><br/>
                     

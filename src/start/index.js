@@ -1,13 +1,15 @@
 import React from 'react';
 
-function start() {
+
+function Start() {
   return (
     <div className="home">
       
         <h1>Pantalla principal</h1>
+        
       
     </div>
   );
 }
 
-export default start;
+export default Start;

@@ -15,18 +15,13 @@ function Header() {
                             </div>
                         </Grid.Column>
                         <Grid.Column>
-                        <Grid columns={3}>
-                        <Grid.Row className="heads">
-                        
-                        <Grid.Column><Link to="/">Home</Link></Grid.Column>
-                        <Grid.Column><Link to="/Simular">Simular</Link></Grid.Column>
-                        
-                        
-                        <Grid.Column><Link to="/Graficos">Graficos</Link></Grid.Column>
-                        
-                        
-                        </Grid.Row>
-                        </Grid>
+                            <Grid columns={3}>
+                                <Grid.Row className="heads">                                
+                                    <Grid.Column><Link to="/">Home</Link></Grid.Column>
+                                    <Grid.Column><Link to="/Simular">Simular</Link></Grid.Column>                                            
+                                    <Grid.Column><Link to="/Graficos">Graficos</Link></Grid.Column>                      
+                                </Grid.Row>
+                            </Grid>
                     </Grid.Column>
             
             </Grid.Row>

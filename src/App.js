@@ -10,19 +10,23 @@ import Simular from "./simular";
 class App extends Component {
   render(){
   return (
-    
+    <div>
       <HashRouter >
-        <Switch>
-          <div>
+      
+        
+        <div>     
             <Header />
             <Divider />
+        <Switch>
             <Route exact path="/" component={Start} />
             <Route exact path="/simular" component={Simular} />
             <Route exact path="/graficos" component={Graficos} />
-          </div>            
+                     
         </Switch>
+        </div>  
+        
       </HashRouter>
-    
+    </div>
   );
   }
 }

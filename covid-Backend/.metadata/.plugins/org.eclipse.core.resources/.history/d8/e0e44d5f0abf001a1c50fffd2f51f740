@@ -1,7 +1,0 @@
-package com.example.interfaceServices;
-
-import org.hibernate.sql.Select;
-
-public interface IDtosService {
-	public List<Dtos>listar();
-}

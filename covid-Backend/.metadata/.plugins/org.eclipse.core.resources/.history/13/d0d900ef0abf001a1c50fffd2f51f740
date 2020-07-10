@@ -1,7 +1,0 @@
-package com.example.interfaceServices;
-
-import java.util.List;
-
-public interface IDtosService {
-	public List<Dtos>listar();
-}

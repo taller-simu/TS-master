@@ -13,6 +13,7 @@ router.get('/ultimoRegistro', (req, res) => {
     }
   });  
 });
+
 router.post('/enviardatos', (req, res) => {
     const sql = 'INSERT INTO datos SET ?';
     const datosObj = {
@@ -20,7 +21,13 @@ router.post('/enviardatos', (req, res) => {
         probabilidadContagio:   req.body.probabilidadContagio,
         TasaRecuperacion:       req.body.TasaRecuperacion,
         TasaMortalidad:         req.body.TasaMortalidad,
-        fechaRegistro:          req.body.fechaRegistro
+        fechaRegistro:          req.body.fechaRegistro,
+        dias:                   req.body.dias,
+        infectadosinicial:      req.body.infectadosinicial,
+        poblacionInicialSusc:   req.body.poblacionInicialSusc,
+        fallecidosini:          req.body.fallecidosini,
+        recuperadosini:         req.body.recuperadosini,
+        municipio:              req.body.municipio
     }
     mysqlConnection.query(sql,datosObj, err => {
       if(!err) {

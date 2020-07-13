@@ -9,8 +9,19 @@ export default class Simular extends Component{
             r1:0,r2:0,r3:0,r4:0,r5:0,r6:0,r7:0,r8:0,r9:0,r10:0,r11:0,r12:0,r13:0,r14:0,r15:0,r16:0,r17:0,r18:0,r19:0,r20:0,
             f1:0,f2:0,f3:0,f4:0,f5:0,f6:0,f7:0,f8:0,f9:0,f10:0,f11:0,f12:0,f13:0,f14:0,f15:0,f16:0,f17:0,f18:0,f19:0,f20:0
             ,
-            tasaInfectados:0,
-            items: []
+            tasaInteraccion:0,
+            infectadosinicial:0,
+            probabilidadContagio:0,
+            TasaRecuperacion:0,
+            TasaMortalidad:0,
+            fechaRegistro:0,
+            poblacionInicialSusc:0,
+            poblacion:0,
+            dias:0,
+            fallecidosini:0,
+            recuperadosini:0,
+            municipio:''
+            
         };  
         
     }
@@ -22,15 +33,48 @@ export default class Simular extends Component{
         })
     }
     
-    sacartInfectados=async()=>{
-        let suma=(this.state.i2/this.state.i1)+(this.state.i4/this.state.i3)+(this.state.i6/this.state.i5)+(this.state.i8/this.state.i7)+(this.state.i10/this.state.i9)+(this.state.i12/this.state.i11)+(this.state.i14/this.state.i13)+(this.state.i6/this.state.i15)+(this.state.i18/this.state.i17)+(this.state.i20/this.state.i19);
-        let tasai=suma/17;
+    simular =()=>{
+        let suma=(this.state.i2/this.state.i1)+(this.state.i3/this.state.i2)+(this.state.i4/this.state.i3)+(this.state.i5/this.state.i4)+(this.state.i6/this.state.i5)+(this.state.i7/this.state.i6)+(this.state.i8/this.state.i7)+(this.state.i9/this.state.i8)+(this.state.i10/this.state.i9)+(this.state.i11/this.state.i10)+(this.state.i12/this.state.i11)+(this.state.i13/this.state.i12)+(this.state.i14/this.state.i13)+(this.state.i15/this.state.i14)+(this.state.i16/this.state.i15)+(this.state.i17/this.state.i16)+(this.state.i18/this.state.i17)+(this.state.i19/this.state.i18)+(this.state.i20/this.state.i19);
+        let tasai=(suma/19)+1;
+        let tmortalidad=((this.state.r1/this.state.i1)+(this.state.r2/this.state.i2)+(this.state.r3/this.state.i3)+(this.state.r4/this.state.i4)+(this.state.r5/this.state.i5)+(this.state.r6/this.state.i6)+(this.state.r7/this.state.i7)+(this.state.r8/this.state.i8)
+        +(this.state.r9/this.state.i9)+(this.state.r10/this.state.i10)+(this.state.r11/this.state.i11)+(this.state.r12/this.state.i12)+(this.state.r13/this.state.i13)+(this.state.r14/this.state.i14)
+        +(this.state.r15/this.state.i15)+(this.state.r16/this.state.i16)+(this.state.r17/this.state.i17)+(this.state.r18/this.state.i18)+(this.state.r19/this.state.i19)+(this.state.r20/this.state.i20))/20;
+        let trecuperacion=1-tmortalidad;
         this.setState({
-            
-            tasaInfectados:tasai
+            TasaMortalidad:tmortalidad,
+            TasaRecuperacion:trecuperacion,
+            tasaInteraccion:tasai,
+            infectadosinicial:this.state.i20,
+            poblacionInicialSusc:this.state.poblacion-this.state.i20,
+            fallecidosini:this.state.f20,
+            recuperadosini:this.state.r20
         })
-        console.log(this.state.tasaInfectados)
-        
+        console.log(this.state.TasaRecuperacion);
+        try {
+                fetch('http://localhost:8000/enviardatos', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tasaInteraccion:this.state.tasaInteraccion,
+                infectadosinicial:this.state.infectadosinicial,
+                probabilidadContagio:0.14,
+                TasaRecuperacion:this.state.TasaRecuperacion,
+                TasaMortalidad:this.state.TasaMortalidad,
+                fechaRegistro:this.state.fechaRegistro,
+                poblacionInicialSusc:this.state.poblacionInicialSusc,
+                dias:this.state.dias,
+                fallecidosini:this.state.fallecidosini,
+                recuperadosini:this.state.recuperadosini,
+                municipio:this.state.municipio
+            })
+            })
+            
+          } catch (err) {
+            return err;
+          }
     }
     render(){
         return(
@@ -136,7 +180,13 @@ export default class Simular extends Component{
     
             </form>
             <div align="center">
-            <Button onClick={()=>this.sacartInfectados()}>iniciar</Button>
+                <label>Introduzca los dias a simular: </label>
+                <input type="number" class="" name="dias" id="" placeholder="dias" onChange={(e)=>this.handleState(e)} required/><br/> 
+                <label>Introduzca Nombre de Municipio: </label>
+                <input class="" name="municipio" id="" placeholder="municipio" onChange={(e)=>this.handleState(e)} required/><br/>        
+                <label>Introduzca la poblacion total del Municipio: </label> 
+                <input type="number" class="" name="poblacion" id="" placeholder="poblacion" onChange={(e)=>this.handleState(e)} required/><br/>
+                <Button style={{margin:"25px",backgroundColor:"red"}}onClick={()=>this.simular()}>iniciar</Button>
             </div>
             
             </div>

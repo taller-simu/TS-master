@@ -19,8 +19,8 @@ class App extends Component {
             <Divider />
         <Switch>
             <Route exact path="/" component={Start} />
-            <Route exact path="/simular" component={Simular} />
-            <Route exact path="/graficos" component={Graficos} />
+            <Route path="/simular" component={Simular} />
+            <Route path="/graficos" component={Graficos} />
                      
         </Switch>
         </div>  

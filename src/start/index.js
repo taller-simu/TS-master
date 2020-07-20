@@ -13,7 +13,7 @@ function start() {
       
         <div className="subtitle">
 
-              <h1>Pantalla principal</h1>
+              <h1>#QUEDATEENCASA</h1>
         </div>
               <div className="autor">
                 <address>

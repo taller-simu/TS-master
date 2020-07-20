@@ -32,6 +32,7 @@ router.post('/enviardatos', (req, res) => {
     mysqlConnection.query(sql,datosObj, err => {
       if(!err) {
         res.json({status: 'datos añadidos'});
+        console.log("datos añadidos"+datosObj.TasaMortalidad);
       } else {
         console.log(err);
       }

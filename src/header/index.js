@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {Grid} from 'semantic-ui-react';
 
 
@@ -16,10 +16,24 @@ function Header() {
                         </Grid.Column>
                         <Grid.Column>
                             <Grid columns={3}>
-                                <Grid.Row className="heads">                                
-                                    <Grid.Column><Link to="/">Home</Link></Grid.Column>
-                                    <Grid.Column><Link to="/Simular">Simular</Link></Grid.Column>                                            
-                                    <Grid.Column><Link to="/Graficos">Graficos</Link></Grid.Column>                      
+                                <Grid.Row className="heads">   
+                                                            
+                                    <Grid.Column >
+                                        <div className="g">
+                                        <NavLink exact activeClassName="main-nav-active" className="l" to="/">Home</NavLink>
+                                        </div>
+                                        </Grid.Column>
+                                    <Grid.Column>
+                                        <div className="g">
+                                        <NavLink activeClassName="main-nav-active" className="l" to="/Simular">Simular</NavLink>
+                                        </div>
+                                        </Grid.Column>                                            
+                                    <Grid.Column>
+                                            <div className="g">
+                                            <NavLink activeClassName="main-nav-active" className="l" to="/Graficos">Graficos</NavLink>
+                                            </div>
+                                        </Grid.Column>   
+                                                      
                                 </Grid.Row>
                             </Grid>
                     </Grid.Column>

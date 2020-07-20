@@ -1,19 +1,76 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
 .heads {
-    margin-top: 1.3rem;
-    margin-left: 1rem;
+    height: 6.6em;
 }
-.heads a{
-    
-    padding: 7%;
+
+.l {
+    color: #37d4e9;
+    padding: 19px;
     font-size: 25px;
-}
-.title{
-    text-align: center;
     
-    font-size: 45px;
-    font-weight: 500;
-    padding: 20px;
 }
-.grid-head{
+.g .l:active{
+    background-color: aliceblue;
+}
+
+.g {
+    text-align: center;
+    transform: translate(-50%, -50%);
+    position: relative;
+    top: 50%;
+    left: 50%;
+    
+
+}
+
+.l:hover {
     background-color: aqua;
+    color: rgb(31, 26, 26);
+    
+}
+
+.title {
+    text-align: center;
+    transform: translate(-50%, -50%);
+    font-size: 45px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    color: white;
+    
+}
+
+.grid-head {
+    background-color: #232020;
+    position: relative;
+    width: 101%;
+    height: 80px;
+}
+.Infectados>input{
+    margin: 1px;
+}
+
+.Recuperados>input{
+    margin: 1px;
+}
+.Fallecidos>input{
+    margin: 1px;
+}
+.form>input{
+    margin: 4px;
+}
+
+.main-nav-active{
+    background-color: aqua;
+    color: rgb(31, 26, 26);
+}
+
+
+
+.checkbox{
+    display: inline-block;
 }

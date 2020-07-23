@@ -1,8 +1,5 @@
 /*Estilos generales para todo el cuerpo*/
-.home{
-   
-  
-}
+
 .subtitle{
 
     font-style: italic;
@@ -30,7 +27,8 @@
     border-radius: 20px ;
     padding: 5px;
     float: left;
-    padding-right: 1px
+    padding-right: 1px;
+    
 
 }
 .info{

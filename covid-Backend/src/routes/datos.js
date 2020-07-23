@@ -21,18 +21,20 @@ router.post('/enviardatos', (req, res) => {
         probabilidadContagio:   req.body.probabilidadContagio,
         TasaRecuperacion:       req.body.TasaRecuperacion,
         TasaMortalidad:         req.body.TasaMortalidad,
-        fechaRegistro:          req.body.fechaRegistro,
-        dias:                   req.body.dias,
         infectadosinicial:      req.body.infectadosinicial,
         poblacionInicialSusc:   req.body.poblacionInicialSusc,
         fallecidosini:          req.body.fallecidosini,
         recuperadosini:         req.body.recuperadosini,
-        municipio:              req.body.municipio
+        municipio:              req.body.municipio,
+        fechaActual:            req.body.fechaActual,
+        fechaInicio:            req.body.fechaInicio,
+        fechaFin:               req.body.fechaFin,
+        dias:                   req.body.dias,
     }
     mysqlConnection.query(sql,datosObj, err => {
       if(!err) {
         res.json({status: 'datos añadidos'});
-        console.log("datos añadidos"+datosObj.TasaMortalidad);
+        
       } else {
         console.log(err);
       }

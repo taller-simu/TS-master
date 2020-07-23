@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Grid, GridColumn, Divider, Button } from 'semantic-ui-react';
-
+import Footer from '../footer';
 export default class Simular extends Component{
     constructor(props) {
         super(props);
@@ -11,7 +11,9 @@ export default class Simular extends Component{
             f1:0,f2:0,f3:0,f4:0,f5:0,f6:0,f7:0,f8:0,f9:0,f10:0,f11:0,f12:0,f13:0,f14:0,f15:0,f16:0,f17:0,f18:0,f19:0,f20:0
             ,            
             
-            fechaRegistro:0,
+            
+            fechaInicio:0,
+            fechaFin:0,
             poblacion:0,
             dias:0,            
             municipio:''
@@ -49,11 +51,17 @@ export default class Simular extends Component{
             let trecuperacion = 1 - tmortalidad;
             let pis = this.state.poblacion - this.state.i20;
             
-            this.enviarDatos(tmortalidad,tasai,trecuperacion,pis);
+            //contador de fechas
+            let fechaActual=new Date();
+            let fechainicio=new Date(fechaActual).getTime();
+            let fechafin=new Date(this.state.fechaFin).getTime();
+            let diasTotales = (fechafin - fechainicio)/(1000*60*60*24);
+            
+            this.enviarDatos(tmortalidad,tasai,trecuperacion,pis,diasTotales,fechaActual);
             
         }
 
-        enviarDatos=async(tm,ti,tr,pis)=>{
+        enviarDatos=async(tm,ti,tr,pis,diasTotales,fechaActual)=>{
             
             try {
                   const res =  await fetch('http://localhost:8000/enviardatos', {
@@ -72,9 +80,12 @@ export default class Simular extends Component{
                     TasaRecuperacion:tr,
                     TasaMortalidad:tm,
 
-                    fechaRegistro:this.state.fechaRegistro,
-                    poblacionInicialSusc:pis,
-                    dias:this.state.dias,                    
+                    fechaActual:fechaActual,
+                    fechaInicio:this.state.fechaInicio,
+                    fechaFin:this.state.fechaFin,
+                    dias:diasTotales,
+
+                    poblacionInicialSusc:pis,                    
                     municipio:this.state.municipio
                 })
                 })
@@ -96,7 +107,7 @@ export default class Simular extends Component{
                     <div className="titulo" align="center">
                         <h1>Insertar los datos historicos para la simulación</h1>
                                             
-                        Introduzca datos de infectados, contagiados y recuperados de 20 dias
+                        <div style={{fontSize:"17px"}}>Introduzca datos de infectados, contagiados y recuperados de 20 dias</div>
                         </div>
 
                         <Divider/>
@@ -193,24 +204,25 @@ export default class Simular extends Component{
                 </div>
     
             </form>
-            <div className="form" align="center">
-                <label style={{fontSize:18}}>Introduzca los dias a simular: </label>
-                <input type="number"  name="dias" placeholder="dias" onChange={(e)=>this.handleState(e)} required/><br/> 
-
+            <div className="form" align="center" style={{backgroundColor:"rgb(57, 227, 57)"}}>
                 <label style={{fontSize:18}}>Introduzca Nombre de Municipio: </label>
                 <input type="text"  name="municipio" placeholder="municipio" onChange={(e)=>this.handleState(e)} required/><br/>  
 
                 <label style={{fontSize:18}}>Introduzca la poblacion total del Municipio: </label> 
                 <input type="number"  name="poblacion" placeholder="poblacion" onChange={(e)=>this.handleState(e)} required/><br/>
 
-                <label style={{fontSize:18}}>Introduzca la fecha del ultimo dato: </label> 
-                <input type="date"  name="fechaRegistro" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+                <label style={{fontSize:18}}>Introduzca la fecha de inicio: </label> 
+                <input type="date"  name="fechaInicio" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+
+                <label style={{fontSize:18}}>Introduzca la fecha del fin: </label> 
+                <input type="date"  name="fechaFin" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+
                 
                 <Button class="ui primary button" style={{margin:"25px",backgroundColor:"red",color:"black"}} onClick={()=>this.simular()}>iniciar</Button>
             </div>
             
+        <Footer/>
             </div>
-
         );
         
     }

@@ -1,10 +1,10 @@
 import React from 'react';
 import App from "../App.css";
 import covid from "../covid-19.jpg";
-import facebook from "../facebook-new.png"
+import facebook from "../facebook-new.png";
 import youtube from "../youtebe.png"
-import twitter from "../twitter.jpg"
-
+import twitter from "../twitter.jpg";
+import { Image } from 'semantic-ui-react';
 
 
 function start() {
@@ -33,12 +33,13 @@ function start() {
               </div>
 
                                 <div className="imag">
-                                    <img className="log" src={covid} width="550" height="450"/>
+                                    
+                                    <Image className="log" src={covid}  bordered style={{with:"550px",height:"450px"}} />
 
                                 </div>
 
                                         <div className="info">     
-                                              <h1 className="h2"> ¿ Por que los brotes como el corona virus <br />
+                                              <h1 className="h2"> ¿ Por que los brotes como el coronavirus <br />
                                                   crecen exponencialmente y <br />
                                                   como aplanar la curva de contagios ?
                                               </h1>
@@ -53,9 +54,12 @@ function start() {
                                         </div>
                               <div className="redesociales">
                                       
-                                                      <img className="log" src={facebook} target="black" width="80" height="80"/>
-                                                      <img className="log1" src={youtube} target="black" width="80" height="80"/>
-                                                      <img className="log" src={twitter} target="black" width="80" height="80"/>
+                                                      
+                                                      <Image className="log" src={facebook}  bordered style={{with:"80px",height:"80px"}} />
+                                                      
+                                                      <Image className="log" src={youtube}  bordered style={{with:"80px",height:"80px"}} />
+                                                      
+                                                      <Image className="log" src={twitter}  bordered style={{with:"80px",height:"80px"}} />
                                   
                                   
                               </div>

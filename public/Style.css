@@ -62,8 +62,10 @@
         margin: 0 auto; /* Esto lo centra */        
     }
     .info>.h2{        
-        margin-top: 400px;
-        
+        margin-top: 400px;        
+    }
+    .input-titles{
+        font-size: 20px;
     }
     
 }

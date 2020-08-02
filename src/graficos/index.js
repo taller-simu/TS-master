@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Divider, Grid, GridColumn,Input,Radio } from 'semantic-ui-react';
+import { Grid, GridColumn,Input,Radio } from 'semantic-ui-react';
 import Footer from '../footer';
 import axios from 'axios';
 import Modals from '../Components/modals';
@@ -42,6 +42,8 @@ class Graficos extends Component{
             isChecked1: false,
             isChecked2: false,
             isChecked3: false,
+
+            recibe:[],
             
             //Object for chart
             chartData:{
@@ -89,11 +91,11 @@ class Graficos extends Component{
         
     }
     fetchData = async ()=>{
-        await axios('https://taller-simu.herokuapp.com/ultimoregistro', {method: 'GET'})
-        
+        await axios('https://taller-simu.herokuapp.com/allData', {method: 'GET'})        
         .then(res => {
-           const data =  res.data;
-         
+        const data =  res.data; 
+        
+        this.setState({recibe:data})        
         data.map(
             (it)=>(
                 this.setState({
@@ -101,7 +103,6 @@ class Graficos extends Component{
                 tasaMortalidad:it.TasaMortalidad,
                 tasaInteraccion:it.tasaInteraccion,
                 probabilidadContagio:it.probabilidadContagio,
-
                 
                 fechaActual:it.fechaActual,
                 fechaInicio:it.fechaInicio,
@@ -116,8 +117,6 @@ class Graficos extends Component{
                 trIterable:it.TasaRecuperacion,
                 tmIterable:it.TasaMortalidad,
                 tiIterable:it.tasaInteraccion,
-                
-
                 })
             )
 
@@ -186,11 +185,14 @@ class Graficos extends Component{
         this.setState({
             chartData:newState              
         })
-    }else{
-        this.setState({show1:true})
-    }    
+        }else{
+            this.setState({
+                show1:true
+            })
+        }
+    }   
         
-    }
+    
     totalDays=(fechaI,fechaF)=>{
         
         let fechaini=new Date(this.state.fechaActual).getTime();
@@ -1565,13 +1567,67 @@ class Graficos extends Component{
     
         }
     }
+    changeMunicipality=async(value)=>{
+        value=parseInt(value);
+        let allData=this.state.recibe;
+        
+        
+        let municipio=allData.find((post, index) =>{
+            
+            if(post.id === value) return true;
+            
+        });
+        await this.establecerstate(municipio.TasaRecuperacion,municipio.TasaMortalidad,municipio.tasaInteraccion,municipio.probabilidadContagio,municipio.fechaActual,
+            municipio.fechaInicio,municipio.fechaFin,municipio.poblacionInicialSusc,municipio.infectadosinicial,municipio.recuperadosini,municipio.fallecidosini,
+            municipio.municipio);
+            
+        this.infectados(this.state.fechaInicio,this.state.fechaFin);       
+    }
+
+    establecerstate=(tr,tm,ti,pc,fa,fi,ff,pis,ii,ri,fallecidosi,m)=>{
+        this.setState({
+            tasaRecuperacion:tr,
+            tasaMortalidad:tm,
+            tasaInteraccion:ti,
+            probabilidadContagio:pc,
+            fechaActual:fa,
+            fechaInicio:fi,
+            fechaFin:ff,
+            poblacionInicialSusc:pis,
+            infectadosinicial:ii,
+            recuperadosini:ri,
+            fallecidosini:fallecidosi,
+            municipio:m,
+            susceptiblesini:pis,
+            trIterable:tr,
+            tmIterable:tm,
+            tiIterable:ti,
+
+
+        });
+        
+        
+    }
+
     render(){
+        const data=this.state.recibe;
         const fechaI=new Date(this.state.fechaActual);
         const fechaA=(fechaI.getDate()+1)+"-"+(fechaI.getMonth()+1)+"-"+fechaI.getFullYear();
         let showModal=()=>this.setState({show:false,show1:false})
         return(
             <div>
-                
+                <div style={{margin:"10px"}}>
+                <label className="" style={{fontSize:"25px",}}>Municipios que cuentan con registros y las fechas en las que se registraron los datos :</label>
+                <select id="municipio"  onChange={()=>this.changeMunicipality(document.getElementById("municipio").value)} >
+                    <option value="0" selected disabled>Cambiar Municipio</option>
+                    {
+                        data.map((it)=>(
+                            <option key={it.id} value={it.id}>{it.municipio} con fecha:   {it.fechaActual}</option>
+                            
+                        ))
+                    }
+                </select>
+                </div>
                 <div className="chart-container" >                
                     <Line 
                             data={this.state.chartData}

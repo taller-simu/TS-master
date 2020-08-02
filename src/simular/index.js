@@ -137,28 +137,27 @@ export default class Simular extends Component{
                     <Grid columns={3} divided>
                         <GridColumn>
                         <div className="Infectados" align="center" >
-                            <h2 className="">Datos Historicos de Infectados</h2>
-                            
-                            <input type="number" name="i1" placeholder="infectados" onChange={(e)=>this.handleState(e)} required /><br/>                        
-                            <input type="number" name="i2" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
-                            <input type="number" name="i5" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i3" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i6" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>    
-                            <input type="number" name="i4" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                       
-                            <input type="number" name="i7" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i8" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
-                            <input type="number" name="i9" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i10" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i11" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i12" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>    
-                            <input type="number" name="i13" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i14" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
-                            <input type="number" name="i15" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i16" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i17" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i18" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>
-                            <input type="number" name="i19" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="i20" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>
+                            <h2 className="input-titles">Datos Historicos de Infectados</h2>                            
+                            <Input type="number" style={{margin:"-9px"}} name="i1" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i2" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i5" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i3" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i6" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>    
+                            <Input type="number" style={{margin:"-9px"}} name="i4" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                       
+                            <Input type="number" style={{margin:"-9px"}} name="i7" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i8" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i9" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i10" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i11" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i12" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>    
+                            <Input type="number" style={{margin:"-9px"}} name="i13" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i14" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i15" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i16" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i17" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i18" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="i19" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i20" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
                             
                                                 
                         </div>
@@ -166,54 +165,54 @@ export default class Simular extends Component{
 
                     <GridColumn>
                         <div className="Recuperados" align="center" >
-                            <h2 className="">Datos historicos de Recuperados</h2>
-                            <input type="number" name="r1" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r2" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r3" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r4" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r5" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="r6" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r7" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r8" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r9" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r10" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="r11" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r12" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r13" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r14" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                       
-                            <input type="number" name="r15" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="r16" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r17" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r18" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r19" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="r20" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <h2 className="input-titles">Datos Historicos de Recuperados</h2>
+                            <Input type="number" style={{margin:"-9px"}} name="r1" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r2" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r3" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r4" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r5" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="r6" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r7" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r8" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r9" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r10" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="r11" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r12" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r13" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r14" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                       
+                            <Input type="number" style={{margin:"-9px"}} name="r15" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="r16" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r17" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r18" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r19" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="r20" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
                             
                         </div>
                     </GridColumn>
 
                     <GridColumn>
                         <div className="Fallecidos" align="center">
-                            <h2 className="">Datos Historicos de Fallecidos</h2>
-                            <input type="number" name="f1" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f2" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f3" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f4" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f5" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="f6" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f7" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f8" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f9" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f10" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="f11" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f12" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f13" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f14" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f15" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="f16" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f17" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="f18" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                            <input type="number" name="f19" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                            <input type="number" name="f20" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <h2 className="input-titles">Datos Historicos de Fallecidos</h2>
+                            <Input type="number" style={{margin:"-9px"}} name="f1" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f2" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f3" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f4" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f5" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="f6" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f7" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f8" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f9" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f10" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="f11" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f12" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f13" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f14" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f15" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="f16" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f17" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="f18" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
+                            <Input type="number" style={{margin:"-9px"}} name="f19" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="f20" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
                             
                         </div>
                     </GridColumn>                    

@@ -7,6 +7,7 @@ import {Grid} from 'semantic-ui-react';
 function Header() {
     
     return(
+    
         <Grid columns={2} className="grid-head">
             <Grid.Row>
                     <Grid.Column>

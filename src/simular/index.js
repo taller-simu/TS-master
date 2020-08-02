@@ -1,6 +1,20 @@
 import React, { Component } from 'react';
-import { Grid, GridColumn, Divider, Button } from 'semantic-ui-react';
+import { Grid, GridColumn, Divider, Button, Input } from 'semantic-ui-react';
 import Footer from '../footer';
+import axios from 'axios';
+import Modals from '../Components/modals';
+
+
+const styles={
+    box:{
+        marginTop:20,
+        marginBottom:20,
+        width: 100,
+        height: 50,
+        border: '5px solid chocolate',
+        borderRadius: 10
+    }
+}
 export default class Simular extends Component{
     constructor(props) {
         super(props);
@@ -8,9 +22,10 @@ export default class Simular extends Component{
         this.state = {
             i1:0,i2:0,i3:0,i4:0,i5:0,i6:0,i7:0,i8:0,i9:0,i10:0,i11:0,i12:0,i13:0,i14:0,i15:0,i16:0,i17:0,i18:0,i19:0,i20:0,
             r1:0,r2:0,r3:0,r4:0,r5:0,r6:0,r7:0,r8:0,r9:0,r10:0,r11:0,r12:0,r13:0,r14:0,r15:0,r16:0,r17:0,r18:0,r19:0,r20:0,
-            f1:0,f2:0,f3:0,f4:0,f5:0,f6:0,f7:0,f8:0,f9:0,f10:0,f11:0,f12:0,f13:0,f14:0,f15:0,f16:0,f17:0,f18:0,f19:0,f20:0
-            ,            
-            
+            f1:0,f2:0,f3:0,f4:0,f5:0,f6:0,f7:0,f8:0,f9:0,f10:0,f11:0,f12:0,f13:0,f14:0,f15:0,f16:0,f17:0,f18:0,f19:0,f20:0,
+                       
+            show:false,
+            show1:false,
             
             fechaInicio:0,
             fechaFin:0,
@@ -30,7 +45,7 @@ export default class Simular extends Component{
     }
     
     simular = () => {
-       
+    
             let suma = (this.state.i2 / this.state.i1) + (this.state.i3 / this.state.i2) +
                 (this.state.i4 / this.state.i3) + (this.state.i5 / this.state.i4) + (this.state.i6 / this.state.i5) +
                 (this.state.i7 / this.state.i6) + (this.state.i8 / this.state.i7) + (this.state.i9 / this.state.i8) +
@@ -38,7 +53,7 @@ export default class Simular extends Component{
                 (this.state.i13 / this.state.i12) + (this.state.i14 / this.state.i13) + (this.state.i15 / this.state.i14) +
                 (this.state.i16 / this.state.i15) + (this.state.i17 / this.state.i16) + (this.state.i18 / this.state.i17) +
                 (this.state.i19 / this.state.i18) + (this.state.i20 / this.state.i19);
-
+            
             let tasai = (suma / 19) + 1;
 
             let tmortalidad = ((this.state.r1 / this.state.i1) + (this.state.r2 / this.state.i2) + (this.state.r3 / this.state.i3) +
@@ -52,25 +67,27 @@ export default class Simular extends Component{
             let pis = this.state.poblacion - this.state.i20;
             
             //contador de fechas
-            let fechaActual=new Date();
+            let fechaactual=new Date();
+            let fechaActual=fechaactual.getFullYear()+"-"+(fechaactual.getMonth()+1)+"-"+fechaactual.getDate()
             let fechainicio=new Date(fechaActual).getTime();
             let fechafin=new Date(this.state.fechaFin).getTime();
             let diasTotales = (fechafin - fechainicio)/(1000*60*60*24);
+            
             
             this.enviarDatos(tmortalidad,tasai,trecuperacion,pis,diasTotales,fechaActual);
             
         }
 
         enviarDatos=async(tm,ti,tr,pis,diasTotales,fechaActual)=>{
-            
-            try {
-                  const res =  await fetch('http://localhost:8000/enviardatos', {
-                method: 'POST',
-                headers: {                    
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    
+           
+            if(Number.isNaN(tm)===true || Number.isNaN(ti)===true || Number.isNaN(tr)===true || pis===0 || diasTotales<1){
+                this.setState({show:true});
+            }
+            else{
+            await axios({
+                method: 'POST',              
+                url: 'https://taller-simu.herokuapp.com/enviardatos',
+                data: {
                     infectadosinicial:this.state.i20,
                     fallecidosini:this.state.f20,
                     recuperadosini:this.state.r20,
@@ -83,22 +100,27 @@ export default class Simular extends Component{
                     fechaActual:fechaActual,
                     fechaInicio:this.state.fechaInicio,
                     fechaFin:this.state.fechaFin,
-                    dias:diasTotales,
+                    
 
                     poblacionInicialSusc:pis,                    
                     municipio:this.state.municipio
+                }
+                }).then(response => {
+                    console.log("Success ========>", response);
+                    
                 })
-                })
-                return res;
-            } catch (err) {
-                return err;
+                .catch(error => {
+                    console.log("Error ========>", error);                   
+                    
+                }
+            )
+            this.setState({show1:true})
             }
-        }
-          
+        }          
           
     
     render(){
-        
+        const showModal=()=>{this.setState({show:false,show1:false})}
         return(
         
             <div>
@@ -114,111 +136,121 @@ export default class Simular extends Component{
                         
                     <Grid columns={3} divided>
                         <GridColumn>
-                    <div className="Infectados" align="center" >
-                        <h2 className="">Datos Historicos de Infectados</h2>
-                        
-                        <input type="number" name="i1" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i2" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
-                        <input type="number" name="i3" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i4" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                       
-                        <input type="number" name="i5" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i6" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>    
-                        <input type="number" name="i7" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i8" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
-                        <input type="number" name="i9" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i10" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i11" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i12" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>    
-                        <input type="number" name="i13" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i14" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
-                        <input type="number" name="i15" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i16" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i17" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i18" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>
-                        <input type="number" name="i19" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="i20" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>
-                        
-                                            
-                    </div>
+                        <div className="Infectados" align="center" >
+                            <h2 className="">Datos Historicos de Infectados</h2>
+                            
+                            <input type="number" name="i1" placeholder="infectados" onChange={(e)=>this.handleState(e)} required /><br/>                        
+                            <input type="number" name="i2" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
+                            <input type="number" name="i5" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i3" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i6" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>    
+                            <input type="number" name="i4" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                       
+                            <input type="number" name="i7" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i8" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
+                            <input type="number" name="i9" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i10" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i11" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i12" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>    
+                            <input type="number" name="i13" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i14" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>                        
+                            <input type="number" name="i15" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i16" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i17" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i18" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>
+                            <input type="number" name="i19" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="i20" placeholder="infectados" onChange={(e)=>this.handleState(e)} required/> <br/>
+                            
+                                                
+                        </div>
                     </GridColumn>
 
                     <GridColumn>
-                    <div className="Recuperados" align="center" >
-                        <h2 className="">Datos historicos de Recuperados</h2>
-                        <input type="number" name="r1" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r2" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r3" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r4" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r5" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="r6" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r7" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r8" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r9" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r10" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="r11" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r12" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r13" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r14" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                       
-                        <input type="number" name="r15" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="r16" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r17" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r18" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r19" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="r20" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
-                        
-                    </div>
+                        <div className="Recuperados" align="center" >
+                            <h2 className="">Datos historicos de Recuperados</h2>
+                            <input type="number" name="r1" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r2" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r3" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r4" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r5" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="r6" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r7" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r8" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r9" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r10" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="r11" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r12" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r13" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r14" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                       
+                            <input type="number" name="r15" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="r16" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r17" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r18" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r19" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="r20" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required/><br/>
+                            
+                        </div>
                     </GridColumn>
 
                     <GridColumn>
-                    <div className="Fallecidos" align="center">
-                        <h2 className="">Datos Historicos de Fallecidos</h2>
-                        <input type="number" name="f1" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f2" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f3" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f4" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f5" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="f6" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f7" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f8" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f9" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f10" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="f11" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f12" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f13" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f14" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f15" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="f16" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f17" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="f18" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                        <input type="number" name="f19" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
-                        <input type="number" name="f20" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
-                        
-                    </div>
-                    </GridColumn>
-                    
-                    
+                        <div className="Fallecidos" align="center">
+                            <h2 className="">Datos Historicos de Fallecidos</h2>
+                            <input type="number" name="f1" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f2" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f3" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f4" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f5" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="f6" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f7" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f8" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f9" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f10" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="f11" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f12" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f13" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f14" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f15" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="f16" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f17" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="f18" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
+                            <input type="number" name="f19" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>                        
+                            <input type="number" name="f20" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required/><br/>
+                            
+                        </div>
+                    </GridColumn>                    
                     </Grid>
-
                     <Divider/>
 
                 </div>
-    
+            <Modals
+                show={this.state.show}
+                onHide={showModal}
+                msg="Introduzca todos los datos Correctamente"
+                f=""
+            />
+            <Modals
+                show={this.state.show1}
+                onHide={showModal}
+                msg="Datos agregados con exito dirigase a Graficos"
+                f=""
+            />
             </form>
             <div className="form" align="center" style={{backgroundColor:"rgb(57, 227, 57)"}}>
-                <label style={{fontSize:18}}>Introduzca Nombre de Municipio: </label>
-                <input type="text"  name="municipio" placeholder="municipio" onChange={(e)=>this.handleState(e)} required/><br/>  
+                
+                <label style={{fontSize:20,marginTop:20}}>Introduzca Nombre de Municipio: </label>
+                <Input type="text"  name="municipio" placeholder="municipio" onChange={(e)=>this.handleState(e)} required icon="flag" focus/><br/>  
 
-                <label style={{fontSize:18}}>Introduzca la poblacion total del Municipio: </label> 
-                <input type="number"  name="poblacion" placeholder="poblacion" onChange={(e)=>this.handleState(e)} required/><br/>
+                <label style={{fontSize:20}}>Introduzca la poblacion total del Municipio: </label> 
+                <Input type="number"  name="poblacion" placeholder="poblacion" onChange={(e)=>this.handleState(e)} required icon="group" focus/><br/>
 
-                <label style={{fontSize:18}}>Introduzca la fecha de inicio: </label> 
-                <input type="date"  name="fechaInicio" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+                <label style={{fontSize:20}}>Introduzca la fecha de iniciode la simulacion: </label> 
+                <Input type="date"  name="fechaInicio" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
 
-                <label style={{fontSize:18}}>Introduzca la fecha del fin: </label> 
-                <input type="date"  name="fechaFin" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+                <label style={{fontSize:20}}>Introduzca la fecha fin de la simulacion: </label> 
+                <Input type="date"  name="fechaFin" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
 
                 
-                <Button class="ui primary button" style={{margin:"25px",backgroundColor:"red",color:"black"}} onClick={()=>this.simular()}>iniciar</Button>
+                <Button style={styles.box} onClick={()=>this.simular()}>iniciar</Button>
+                
             </div>
             
         <Footer/>

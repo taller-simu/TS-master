@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Divider, Grid, GridColumn } from 'semantic-ui-react';
+import { Divider, Grid, GridColumn,Input,Radio } from 'semantic-ui-react';
 import Footer from '../footer';
+import axios from 'axios';
+import Modals from '../Components/modals';
+
+import {Modal,Button} from 'react-bootstrap';
+
 
 class Graficos extends Component{
     constructor(props) {
         super(props);
-        
-        this.state = {    
+        this.toggle= this.toggle.bind(this);
+        this.state = { 
+            show:false,
+            show1:false,
             tasaRecuperacion:0,
             tasaMortalidad:0,
             tasaInteraccion:0,
@@ -18,14 +25,15 @@ class Graficos extends Component{
             valT:0,
             val:0,
             valAu:0,
-
+            valMor:0,
             probabilidadContagio:0,
-            dias:0,
+            
             fechaActual:0,
             fechaInicio:0,
             fechaFin:0,
             municipio:'',
-
+            fechaiNu:0,
+            fechafNu:0,
             susceptiblesini:0,
             infectadosinicial:0,
             recuperadosini:0,
@@ -41,7 +49,6 @@ class Graficos extends Component{
                 datasets:[
                 {
                     label:'Infectados',
-                    fontSize:"",
                     data:[],
                     borderColor:'rgb(214, 224, 18)',
                     fill:false,
@@ -77,14 +84,16 @@ class Graficos extends Component{
         
     componentDidMount=async()=>{
         await this.fetchData(); 
-        this.infectados();
-           
+        this.infectados(this.state.fechaInicio,this.state.fechaFin);
+        
         
     }
     fetchData = async ()=>{
-        let res = await fetch('http://localhost:8000/ultimoRegistro', {method: 'GET'})
-        let data = await res.json()
+        await axios('https://taller-simu.herokuapp.com/ultimoregistro', {method: 'GET'})
         
+        .then(res => {
+           const data =  res.data;
+         
         data.map(
             (it)=>(
                 this.setState({
@@ -93,7 +102,7 @@ class Graficos extends Component{
                 tasaInteraccion:it.tasaInteraccion,
                 probabilidadContagio:it.probabilidadContagio,
 
-                dias:it.dias,
+                
                 fechaActual:it.fechaActual,
                 fechaInicio:it.fechaInicio,
                 fechaFin:it.fechaFin,
@@ -113,11 +122,14 @@ class Graficos extends Component{
             )
 
             
-        )
+            )
+        })
         
     }    
     
-    infectados=()=>{
+    infectados=(fechaI,fechaF)=>{
+        if(fechaI>this.state.fechaActual && fechaF>fechaI){
+            
         let susceptibles = this.state.susceptiblesini;
         let infectados = this.state.infectadosinicial;
         let recuperados = this.state.recuperadosini;
@@ -127,26 +139,71 @@ class Graficos extends Component{
         let recuperaciones,contagios,fallecimientos;
         let mortalidad = this.state.tasaMortalidad;
         let tinteraccion=this.state.tasaInteraccion;        
-
-        for(let i=1 ; i<=this.state.dias ; i++){
-           contagios = (infectados * tinteraccion * susceptibles) / (susceptibles+infectados+recuperados) * proContagio;
-           recuperaciones = infectados * tRecuperacion / 14;
-           fallecimientos = infectados * mortalidad / 14
-           susceptibles = susceptibles - contagios;
-           infectados = infectados + contagios - recuperaciones - fallecimientos;
-           recuperados = recuperados + recuperaciones;
-           fallecidos = fallecidos + fallecimientos;
-           if((this.state.dias-this.countDays())<=i){
-           this.state.chartData.datasets[0].data.push(parseInt(infectados));
-           this.state.chartData.datasets[1].data.push(parseInt(recuperados));
-           this.state.chartData.datasets[2].data.push(parseInt(fallecidos));
-           this.state.chartData.labels.push(this.calcFecha(i));
-           }
-        }  
+        let days=this.totalDays(fechaI,fechaF);
+        let diasMostrar=this.countDays(fechaI,fechaF);
+        let thischart=this.state.chartData.datasets[0];
+        let thischart1=this.state.chartData.datasets[1];
+        let thischart2=this.state.chartData.datasets[2];
+        let initialState=this.state.chartData;
+        let newData1=[];
+        let newData2=[];
+        let newData3=[];
+        let labels=[];
+            for(let i=1 ; i<=days ; i++){
+                contagios = (infectados * tinteraccion * susceptibles) / (susceptibles+infectados+recuperados) * proContagio;
+                recuperaciones = infectados * tRecuperacion / 14;
+                fallecimientos = infectados * mortalidad / 14
+                susceptibles = susceptibles - contagios;
+                infectados = infectados + contagios - recuperaciones - fallecimientos;
+                recuperados = recuperados + recuperaciones;
+                fallecidos = fallecidos + fallecimientos;
+                
+                if((days-diasMostrar)<=i){
+                newData1.push(parseInt(infectados));
+                newData2.push(parseInt(recuperados));
+                newData3.push(parseInt(fallecidos));
+                labels.push(this.calcFecha(i));           
+            }
+        }
+        let newDataSet={
+            ...thischart
+        }
+        let newDataSet1={
+            ...thischart1
+        }
+        let newDataSet2={
+            ...thischart2
+        }
+        initialState.labels=labels;
+        newDataSet.data=newData1;
+        newDataSet1.data=newData2;
+        newDataSet2.data=newData3;
+        
+        let newState={
+            ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+        }           
+        
+        this.setState({
+            chartData:newState              
+        })
+    }else{
+        this.setState({show1:true})
+    }    
+        
     }
-    countDays=()=>{
-        let fechaI=new Date(this.state.fechaInicio).getTime();
-        let fechaF=new Date(this.state.fechaFin).getTime();
+    totalDays=(fechaI,fechaF)=>{
+        
+        let fechaini=new Date(this.state.fechaActual).getTime();
+        let fechaf=new Date(fechaF).getTime();
+        let diasTotales = (fechaf - fechaini)/(1000*60*60*24)+1;
+        
+        return diasTotales;
+
+    }
+
+    countDays=(fechaini,fechafin)=>{
+        let fechaI=new Date(fechaini).getTime();
+        let fechaF=new Date(fechafin).getTime();
         let diff=(fechaF-fechaI)/(1000*60*60*24);
         
         return diff;
@@ -162,16 +219,7 @@ class Graficos extends Component{
             year : 'numeric'
         }).split(' ').join(' ');
         return res;
-        /*let options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          };
-          return date.toLocaleDateString('es-MX', options);*/
-                /*date.setDate(date.getDate()+i);
-                let res=date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
-                return res;*/
+        
     }
     toggleChange1 = () => {
         this.setState({
@@ -187,9 +235,11 @@ class Graficos extends Component{
         }
     }
 
-    forIteration=(susceptibles,infectados,recuperados,fallecidos,proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)=>{
+    forIteration=(susceptibles,infectados,recuperados,fallecidos,proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)=>{
             let obj=[[],[],[]]
-            for(let i=0;i<this.state.dias;i++){
+            let totalDays=this.totalDays(fini,ffin);
+            let days=this.countDays(fini,ffin);
+            for(let i=1;i<=totalDays;i++){
                 contagios = (infectados * tinteraccion * susceptibles) / (susceptibles + infectados + recuperados) * proContagio;
                 recuperaciones = infectados * tRecuperacion / 14;
                 fallecimientos = infectados * mortalidad / 14
@@ -197,7 +247,7 @@ class Graficos extends Component{
                 infectados = infectados + contagios - recuperaciones - fallecimientos;
                 recuperados = recuperados + recuperaciones;
                 fallecidos = fallecidos + fallecimientos;
-                if((this.state.dias-this.countDays())<=i+1){
+                if((totalDays-days)<=i){
                 obj[0].push(parseInt(infectados));
                 obj[1].push(parseInt(recuperados));
                 obj[2].push(parseInt(fallecidos));
@@ -211,7 +261,14 @@ class Graficos extends Component{
         let valor=this.state.valT;
 
         if(!this.state.isChecked2){
-
+            let fini,ffin;
+            if(this.state.fechaiNu!==0){
+                fini=this.state.fechaiNu;
+                ffin=this.state.fechafNu;
+            }else{
+                fini=this.state.fechaInicio;
+                ffin=this.state.fechaFin;
+            }
             let thischart=this.state.chartData.datasets[0];
             let thischart1=this.state.chartData.datasets[1];
             let thischart2=this.state.chartData.datasets[2];
@@ -229,10 +286,10 @@ class Graficos extends Component{
             valor=0.4;
             let tinteraccion=hist-valor;
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)];
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)];
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
-            let newdata2=[...obj[0][2]];   
+            let newdata2=[...obj[0][2]];  
             
             
             let newDataSet={
@@ -246,26 +303,33 @@ class Graficos extends Component{
             }
             newDataSet.data=newdata;
             newDataSet1.data=newdata1;
-            newDataSet2.data=newdata2;
-            
+            newDataSet2.data=newdata2;  
+
             let newState={
                 ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
-            }
-            
+            }      
+
             this.setState({                
                 isChecked2: !this.state.isChecked2,
                 tiIterable: tinteraccion,
                 isChecked3:false,
-                valT:valor
-                
-            })
-            
+                valT:valor                
+            })   
+                     
             this.setState({
                 chartData:newState              
             })
             
         }
         else{
+            let fini,ffin;
+            if(this.state.fechaiNu!==0){
+                fini=this.state.fechaiNu;
+                ffin=this.state.fechafNu;
+            }else{
+                fini=this.state.fechaInicio;
+                ffin=this.state.fechaFin;
+            }
             let thischart=this.state.chartData.datasets[0];
             let thischart1=this.state.chartData.datasets[1];
             let thischart2=this.state.chartData.datasets[2];
@@ -283,7 +347,7 @@ class Graficos extends Component{
             valor=0
             let tinteraccion=hist+valor;
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -322,6 +386,14 @@ class Graficos extends Component{
         let hist=this.state.tiIterable;
         let valor=this.state.valT;
         if(!this.state.isChecked3){
+            let fini,ffin;
+            if(this.state.fechaiNu!==0){
+                fini=this.state.fechaiNu;
+                ffin=this.state.fechafNu;
+            }else{
+                fini=this.state.fechaInicio;
+                ffin=this.state.fechaFin;
+            }
             let thischart=this.state.chartData.datasets[0];
             let thischart1=this.state.chartData.datasets[1];
             let thischart2=this.state.chartData.datasets[2];
@@ -339,7 +411,7 @@ class Graficos extends Component{
             valor=0.2;
             let tinteraccion=hist-valor;
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -374,6 +446,14 @@ class Graficos extends Component{
                        
         }
             else{
+                let fini,ffin;
+            if(this.state.fechaiNu!==0){
+                fini=this.state.fechaiNu;
+                ffin=this.state.fechafNu;
+            }else{
+                fini=this.state.fechaInicio;
+                ffin=this.state.fechaFin;
+            }
                 let thischart=this.state.chartData.datasets[0];
                 let thischart1=this.state.chartData.datasets[1];
                 let thischart2=this.state.chartData.datasets[2];
@@ -391,7 +471,7 @@ class Graficos extends Component{
                 valor=0;
                 let tinteraccion=hist+valor;
                 let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                    proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                    proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
                 let newdata=[...obj[0][0]];
                 let newdata1=[...obj[0][1]];
                 let newdata2=[...obj[0][2]];   
@@ -428,6 +508,14 @@ class Graficos extends Component{
         let histM=this.state.tmIterable;
         let histR=this.state.trIterable;
         let val=this.state.valAu;
+        let fini,ffin;
+            if(this.state.fechaiNu!==0){
+                fini=this.state.fechaiNu;
+                ffin=this.state.fechafNu;
+            }else{
+                fini=this.state.fechaInicio;
+                ffin=this.state.fechaFin;
+            }
         if(value==="todos"){
             
                 let thischart=this.state.chartData.datasets[0];
@@ -442,14 +530,14 @@ class Graficos extends Component{
                 let proContagio = this.state.probabilidadContagio;
                 histM=histM+val;
                 histR=histR-val;
-                val=0.07;
+                val=0.01;
                 let tRecuperacion = histR+val;
                 let recuperaciones,contagios,fallecimientos;
                 let mortalidad = histM-val;
                 let tinteraccion=this.state.tiIterable;
                 
                 let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                    proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                    proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
                 let newdata=[...obj[0][0]];
                 let newdata1=[...obj[0][1]];
                 let newdata2=[...obj[0][2]];   
@@ -497,14 +585,14 @@ class Graficos extends Component{
             
             histM=histM+val;
                 histR=histR-val;
-                val=0.04;
+                val=0.005;
                 let tRecuperacion = histR+val;
                 let recuperaciones,contagios,fallecimientos;
                 let mortalidad = histM-val;
             let tinteraccion=this.state.tiIterable;
             
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -551,14 +639,14 @@ class Graficos extends Component{
             let proContagio = this.state.probabilidadContagio;
             histM=histM+val;
                 histR=histR-val;
-                val=0.02;
+                val=0.004;
                 let tRecuperacion = histR+val;
                 let recuperaciones,contagios,fallecimientos;
                 let mortalidad = histM-val;
             let tinteraccion=this.state.tiIterable;
             
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -588,8 +676,6 @@ class Graficos extends Component{
             this.setState({
                 chartData:newState              
             })
-                       
-        
         }
         if(value==="pocos"){
             
@@ -605,14 +691,14 @@ class Graficos extends Component{
             let proContagio = this.state.probabilidadContagio;
             histM=histM+val;
                 histR=histR-val;
-                val=0.02;
+                val=0.003;
                 let tRecuperacion = histR+val;
                 let recuperaciones,contagios,fallecimientos;
                 let mortalidad = histM-val;
             let tinteraccion=this.state.tiIterable;
             
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -666,7 +752,7 @@ class Graficos extends Component{
             let tinteraccion=this.state.tiIterable;
             
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -696,11 +782,16 @@ class Graficos extends Component{
             this.setState({
                 chartData:newState              
             })
-                       
-        
         }
         if(value==="0"){
-            
+            let fini,ffin;
+            if(this.state.fechaiNu!==0){
+                fini=this.state.fechaiNu;
+                ffin=this.state.fechafNu;
+            }else{
+                fini=this.state.fechaInicio;
+                ffin=this.state.fechaFin;
+            }
             let thischart=this.state.chartData.datasets[0];
             let thischart1=this.state.chartData.datasets[1];
             let thischart2=this.state.chartData.datasets[2];
@@ -720,7 +811,7 @@ class Graficos extends Component{
             let tinteraccion=this.state.tiIterable;
             
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -750,16 +841,21 @@ class Graficos extends Component{
             this.setState({
                 chartData:newState              
             })
-                       
-        
         }
     }
     socialDistancing=(value)=>{
         
         let tSocial=this.state.tiIterable;
         let valor=this.state.val;
-        if(value==="todos"){
-            
+        let fini,ffin;
+            if(this.state.fechaiNu!==0){
+                fini=this.state.fechaiNu;
+                ffin=this.state.fechafNu;
+            }else{
+                fini=this.state.fechaInicio;
+                ffin=this.state.fechaFin;
+            }
+        if(value==="todos"){            
             let thischart=this.state.chartData.datasets[0];
             let thischart1=this.state.chartData.datasets[1];
             let thischart2=this.state.chartData.datasets[2];
@@ -779,7 +875,7 @@ class Graficos extends Component{
             let tinteraccion=tSocial-valor;
             
             let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+                proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
             let newdata=[...obj[0][0]];
             let newdata1=[...obj[0][1]];
             let newdata2=[...obj[0][2]];   
@@ -809,8 +905,6 @@ class Graficos extends Component{
             this.setState({
                 chartData:newState              
             })
-                       
-        
     }
     if(value==="muchos"){
         
@@ -833,7 +927,7 @@ class Graficos extends Component{
         let tinteraccion=tSocial-valor;
         
         let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
         let newdata=[...obj[0][0]];
         let newdata1=[...obj[0][1]];
         let newdata2=[...obj[0][2]];   
@@ -865,8 +959,7 @@ class Graficos extends Component{
                    
     
     }
-    if(value==="algunos"){
-        
+    if(value==="algunos"){        
         let thischart=this.state.chartData.datasets[0];
         let thischart1=this.state.chartData.datasets[1];
         let thischart2=this.state.chartData.datasets[2];
@@ -885,7 +978,7 @@ class Graficos extends Component{
         let tinteraccion=tSocial-valor;
         
         let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
         let newdata=[...obj[0][0]];
         let newdata1=[...obj[0][1]];
         let newdata2=[...obj[0][2]];   
@@ -913,8 +1006,7 @@ class Graficos extends Component{
         })
         this.setState({
             chartData:newState              
-        })                  
-    
+        })                    
     }
     if(value==="pocos"){
         
@@ -936,7 +1028,7 @@ class Graficos extends Component{
         let tinteraccion=tSocial-valor;
         
         let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
         let newdata=[...obj[0][0]];
         let newdata1=[...obj[0][1]];
         let newdata2=[...obj[0][2]];   
@@ -965,8 +1057,6 @@ class Graficos extends Component{
         this.setState({
             chartData:newState              
         })
-                   
-    
     }
     if(value==="ninguno"){
         
@@ -988,7 +1078,7 @@ class Graficos extends Component{
         let tinteraccion=tSocial-valor;
         
         let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
         let newdata=[...obj[0][0]];
         let newdata1=[...obj[0][1]];
         let newdata2=[...obj[0][2]];   
@@ -1040,7 +1130,7 @@ class Graficos extends Component{
         let tinteraccion=tSocial+valor;
 
         let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
-            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion)]
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
         let newdata=[...obj[0][0]];
         let newdata1=[...obj[0][1]];
         let newdata2=[...obj[0][2]];   
@@ -1063,7 +1153,7 @@ class Graficos extends Component{
         }
         
         this.setState({                
-            tiIterable:tinteraccion    ,
+            tiIterable:tinteraccion,
             val:valor          
         })
         this.setState({
@@ -1073,84 +1163,502 @@ class Graficos extends Component{
     
         }
     }
-   
-    render(){
+    handleState = (event) => {
+        this.setState({
+            [event.target.name]: (event.target.value)
+        })
+    }
+    Mods=(props)=> {
+        const fechaI=new Date(this.state.fechaActual);
+        const fechaA=(fechaI.getDate()+1)+"-"+(fechaI.getMonth()+1)+"-"+fechaI.getFullYear();
         
+        return (
+          <Modal
+            {...props}
+            size="me"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title id="contained-modal-title-vcenter">
+                Puede cambiar fecha desde el {fechaA}
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <label style={{fontSize:20}}>Introduzca la fecha de inicio de la nueva simulacion: </label> 
+                <Input type="date"  name="fechaiNu" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+                <label style={{fontSize:20}}>Introduzca la fecha fin de la nueva simulacion: </label> 
+                <Input type="date"  name="fechafNu" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={()=>{
+                  this.toggle();
+                  this.vaciarChart();
+                  this.infectados(this.state.fechaiNu,this.state.fechafNu);
+                  
+              }}>Cambiar</Button>
+            </Modal.Footer>
+          </Modal>
+        );
+    }
+    vaciarChart=()=>{
+        let thischart=this.state.chartData.datasets[0];
+        let thischart1=this.state.chartData.datasets[1];
+        let thischart2=this.state.chartData.datasets[2];        
+        var initialState=this.state.chartData;        
+        
+        let newDataSet={
+            ...thischart
+        }
+        let newDataSet1={
+            ...thischart1
+        }
+        let newDataSet2={
+            ...thischart2
+        }
+        initialState.labels=[];
+        
+        newDataSet.data=[];
+        newDataSet1.data=[];
+        newDataSet2.data=[];
+            
+        let newState={
+            ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+        } 
+           
+        this.setState({
+            chartData:newState              
+        })        
+    }  
+      
+    toggle=()=>{        
+        this.setState({ show: !this.state.show }); 
+    }
+
+    hospitalQuality=(value)=>{
+        let histM=this.state.tmIterable;
+        let histR=this.state.trIterable;
+        let val=this.state.valMor;
+        let fini,ffin;
+        if(this.state.fechaiNu!==0){
+            fini=this.state.fechaiNu;
+            ffin=this.state.fechafNu;
+        }else{
+            fini=this.state.fechaInicio;
+            ffin=this.state.fechaFin;
+        }         
+        if(value==="excelente"){  
+             
+            let thischart=this.state.chartData.datasets[0];
+                let thischart1=this.state.chartData.datasets[1];
+                let thischart2=this.state.chartData.datasets[2];
+                let initialState=this.state.chartData;
+                
+                let susceptibles = this.state.susceptiblesini;
+                let infectados = this.state.infectadosinicial;
+                let recuperados = this.state.recuperadosini;
+                let fallecidos = this.state.fallecidosini;
+                let proContagio = this.state.probabilidadContagio;
+                let recuperaciones,contagios,fallecimientos;
+                histM=histM+val;
+                histR=histR-val;
+                val=0.01;
+                let tRecuperacion = histR+val;
+                let mortalidad = histM-val;
+                let tinteraccion=this.state.tiIterable;
+                
+                let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
+                    proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
+                let newdata=[...obj[0][0]];
+                let newdata1=[...obj[0][1]];
+                let newdata2=[...obj[0][2]];   
+                
+                let newDataSet={
+                    ...thischart
+                }
+                let newDataSet1={
+                    ...thischart1
+                }
+                let newDataSet2={
+                    ...thischart2
+                }
+                newDataSet.data=newdata;
+                newDataSet1.data=newdata1;
+                newDataSet2.data=newdata2;
+    
+                let newState={
+                    ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+                }
+                
+                this.setState({                
+                    tmIterable:mortalidad,
+                    valMor:val,
+                    trIterable: tRecuperacion                 
+                })
+                this.setState({
+                    chartData:newState              
+                })
+    }
+    if(value==="buena"){
+        
+        let thischart=this.state.chartData.datasets[0];
+                let thischart1=this.state.chartData.datasets[1];
+                let thischart2=this.state.chartData.datasets[2];
+                let initialState=this.state.chartData;
+                
+                let susceptibles = this.state.susceptiblesini;
+                let infectados = this.state.infectadosinicial;
+                let recuperados = this.state.recuperadosini;
+                let fallecidos = this.state.fallecidosini;
+                let proContagio = this.state.probabilidadContagio;
+                histM=histM+val;
+                histR=histR-val;
+                val=0.008;
+                let tRecuperacion = histR+val;
+                let recuperaciones,contagios,fallecimientos;
+                let mortalidad = histM-val;
+                let tinteraccion=this.state.tiIterable;
+                
+                let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
+                    proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
+                let newdata=[...obj[0][0]];
+                let newdata1=[...obj[0][1]];
+                let newdata2=[...obj[0][2]];   
+                
+                let newDataSet={
+                    ...thischart
+                }
+                let newDataSet1={
+                    ...thischart1
+                }
+                let newDataSet2={
+                    ...thischart2
+                }
+                newDataSet.data=newdata;
+                newDataSet1.data=newdata1;
+                newDataSet2.data=newdata2;
+    
+                let newState={
+                    ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+                }
+                
+                this.setState({                
+                    tmIterable:mortalidad,
+                    valMor:val,
+                    trIterable: tRecuperacion                 
+                })
+                this.setState({
+                    chartData:newState              
+                })
+                   
+    
+    }
+    if(value==="regular"){      
+        
+        let thischart=this.state.chartData.datasets[0];
+        let thischart1=this.state.chartData.datasets[1];
+        let thischart2=this.state.chartData.datasets[2];
+        let initialState=this.state.chartData;
+        
+        let susceptibles = this.state.susceptiblesini;
+        let infectados = this.state.infectadosinicial;
+        let recuperados = this.state.recuperadosini;
+        let fallecidos = this.state.fallecidosini;
+        let proContagio = this.state.probabilidadContagio;
+        histM=histM+val;
+        histR=histR-val;
+        val=0.005;
+        let tRecuperacion = histR+val;
+        let recuperaciones,contagios,fallecimientos;
+        let mortalidad = histM-val;
+        let tinteraccion=this.state.tiIterable;
+        
+        let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
+        let newdata=[...obj[0][0]];
+        let newdata1=[...obj[0][1]];
+        let newdata2=[...obj[0][2]];   
+        
+        let newDataSet={
+            ...thischart
+        }
+        let newDataSet1={
+            ...thischart1
+        }
+        let newDataSet2={
+            ...thischart2
+        }
+        newDataSet.data=newdata;
+        newDataSet1.data=newdata1;
+        newDataSet2.data=newdata2;
+
+        let newState={
+            ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+        }
+        
+        this.setState({                
+            tmIterable:mortalidad,
+            valMor:val,
+            trIterable: tRecuperacion                 
+        })
+        this.setState({
+            chartData:newState              
+        })
+    }
+    if(value==="mala"){
+       
+        let thischart=this.state.chartData.datasets[0];
+        let thischart1=this.state.chartData.datasets[1];
+        let thischart2=this.state.chartData.datasets[2];
+        let initialState=this.state.chartData;
+        
+        let susceptibles = this.state.susceptiblesini;
+        let infectados = this.state.infectadosinicial;
+        let recuperados = this.state.recuperadosini;
+        let fallecidos = this.state.fallecidosini;
+        let proContagio = this.state.probabilidadContagio;
+        histM=histM+val;
+        histR=histR-val;
+        val=0.001;
+        let tRecuperacion = histR+val;
+        let recuperaciones,contagios,fallecimientos;
+        let mortalidad = histM-val;
+        let tinteraccion=this.state.tiIterable;
+        
+        let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
+        let newdata=[...obj[0][0]];
+        let newdata1=[...obj[0][1]];
+        let newdata2=[...obj[0][2]];   
+        
+        let newDataSet={
+            ...thischart
+        }
+        let newDataSet1={
+            ...thischart1
+        }
+        let newDataSet2={
+            ...thischart2
+        }
+        newDataSet.data=newdata;
+        newDataSet1.data=newdata1;
+        newDataSet2.data=newdata2;
+
+        let newState={
+            ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+        }
+        
+        this.setState({                
+            tmIterable:mortalidad,
+            valMor:val,
+            trIterable: tRecuperacion                 
+        })
+        this.setState({
+            chartData:newState              
+        })
+    }
+    if(value==="pesima"){
+     
+        let thischart=this.state.chartData.datasets[0];
+        let thischart1=this.state.chartData.datasets[1];
+        let thischart2=this.state.chartData.datasets[2];
+        let initialState=this.state.chartData;
+        
+        let susceptibles = this.state.susceptiblesini;
+        let infectados = this.state.infectadosinicial;
+        let recuperados = this.state.recuperadosini;
+        let fallecidos = this.state.fallecidosini;
+        let proContagio = this.state.probabilidadContagio;
+        histM=histM+val;
+        histR=histR-val;
+        val=0.00001;
+        let tRecuperacion = histR+val;
+        let recuperaciones,contagios,fallecimientos;
+        let mortalidad = histM-val;
+        let tinteraccion=this.state.tiIterable;
+        
+        let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
+        let newdata=[...obj[0][0]];
+        let newdata1=[...obj[0][1]];
+        let newdata2=[...obj[0][2]];   
+        
+        let newDataSet={
+            ...thischart
+        }
+        let newDataSet1={
+            ...thischart1
+        }
+        let newDataSet2={
+            ...thischart2
+        }
+        newDataSet.data=newdata;
+        newDataSet1.data=newdata1;
+        newDataSet2.data=newdata2;
+
+        let newState={
+            ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+        }
+        
+        this.setState({                
+            tmIterable:mortalidad,
+            valMor:val,
+            trIterable: tRecuperacion                 
+        })
+        this.setState({
+            chartData:newState              
+        })
+    }
+
+    if(value==="0"){
+      
+        let thischart=this.state.chartData.datasets[0];
+        let thischart1=this.state.chartData.datasets[1];
+        let thischart2=this.state.chartData.datasets[2];
+        let initialState=this.state.chartData;
+        
+        let susceptibles = this.state.susceptiblesini;
+        let infectados = this.state.infectadosinicial;
+        let recuperados = this.state.recuperadosini;
+        let fallecidos = this.state.fallecidosini;
+        let proContagio = this.state.probabilidadContagio;
+        histM=histM+val;
+        histR=histR-val;
+        val=0.0000;
+        let tRecuperacion = histR+val;
+        let recuperaciones,contagios,fallecimientos;
+        let mortalidad = histM-val;
+        let tinteraccion=this.state.tiIterable;
+        
+        let obj=[this.forIteration(susceptibles,infectados,recuperados,fallecidos,
+            proContagio,tRecuperacion,recuperaciones,contagios,fallecimientos,mortalidad,tinteraccion,fini,ffin)]
+        let newdata=[...obj[0][0]];
+        let newdata1=[...obj[0][1]];
+        let newdata2=[...obj[0][2]];   
+        
+        let newDataSet={
+            ...thischart
+        }
+        let newDataSet1={
+            ...thischart1
+        }
+        let newDataSet2={
+            ...thischart2
+        }
+        newDataSet.data=newdata;
+        newDataSet1.data=newdata1;
+        newDataSet2.data=newdata2;
+
+        let newState={
+            ...initialState,datasets:[newDataSet,newDataSet1,newDataSet2]
+        }
+        
+        this.setState({                
+            tmIterable:mortalidad,
+            valMor:val,
+            trIterable: tRecuperacion                 
+        })
+        this.setState({
+            chartData:newState              
+        })
+                   
+    
+        }
+    }
+    render(){
+        const fechaI=new Date(this.state.fechaActual);
+        const fechaA=(fechaI.getDate()+1)+"-"+(fechaI.getMonth()+1)+"-"+fechaI.getFullYear();
+        let showModal=()=>this.setState({show:false,show1:false})
         return(
             <div>
+                
                 <div className="chart-container" >                
-                <Line 
-                        data={this.state.chartData}
-                        
-                        options={
-                            {
-                            responsive:true,
-                            
-                            title: {
-                                display: true,
-                                text: 'DATOS DEL MUNICIPIO DE '+this.state.municipio,
-                                fontSize:50,
-                                position:'top'
-                            },
-                            legend: {
-                                display: true,
-                                position:'bottom',                                
-                                labels: {
-                                    padding:20,
-                                    fontSize:20
-                                }
-                            },
-                            scales: {                                
-                                yAxes: [                                    
-                                    {
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'POBLACION',
-                                            fontSize:25,
-                                            padding:1
-                                        },
-                                    ticks: {
-                                        fontSize:17,
-                                                                            
-                                        }
+                    <Line 
+                            data={this.state.chartData}
+                            width={700}
+                            height={700}
+                            options={
+                                {
+                                responsive:true,
+                                maintainAspectRatio:false,
+                                title: {
+                                    display: true,
+                                    text: 'DATOS DEL MUNICIPIO DE '+this.state.municipio,
+                                    fontSize:50,
+                                    position:'top'
+                                },
+                                legend: {
+                                    display: true,
+                                    position:'bottom',                                
+                                    labels: {
+                                        padding:20,
+                                        fontSize:20
                                     }
-                                ],
-                                xAxes: [
-                                    {
-                                        
-                                    ticks: {
-                                        fontSize:15
+                                },
+                                scales: {                                
+                                    yAxes: [                                    
+                                        {
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: 'POBLACION',
+                                                fontSize:25,
+                                                padding:1
+                                            },
+                                        ticks: {
+                                            fontSize:17                                                                            
                                             }
                                         }
-                                    ]
-                                 }
-                             }
-                         }
-                    
-                    />
+                                    ],
+                                    xAxes: [
+                                        {
+                                            
+                                        ticks: {
+                                            fontSize:15
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        
+                     />
                 </div>
-                <Divider/>
-                <Grid columns={4} divided>
-                <GridColumn>
-                        <div className="checkbox" align="center">
-                        <label style={{fontSize:"25px"}}>Cuarentena:</label>
-                            <div className="ui fitted toggle checkbox" style={{marginLeft:"20px"}}>
-                                <input type="checkbox" checked={this.state.isChecked1} onChange={this.toggleChange1} />
-                            <label></label>
-                            </div><br/>
+                
+                <Button onClick={this.toggle} style={{marginLeft:"40px"}}>Cambiar Fechas</Button>
+                <this.Mods
+                    show={this.state.show}
+                    onHide={showModal}
                     
-                    <label style={{fontSize:"18px"}}>Rigida:</label>
-                    <div className="ui fitted toggle checkbox" style={{marginLeft:"20px"}}>                        
-                        <input type="checkbox" checked={this.state.isChecked2} onChange={this.toggleChange2} disabled={this.isDisabled()}/>
-                        <label></label>
-                    </div><br/>
+                />
+                <Modals
+                show={this.state.show1}
+                onHide={showModal}
+                msg="LAS FECHAS TIENE QUE SER MAYORES A: "
+                f={fechaA}
+                
+                />
+                
+                <Grid columns={4} divided doubling celled >
+                <GridColumn >
+                    <Grid.Row >
 
-                    <label style={{fontSize:"18px"}}>Dinamica:</label>
-                    <div className="ui fitted toggle checkbox" style={{marginLeft:"20px"}}>                        
-                        <input type="checkbox" checked={this.state.isChecked3} onChange={this.toggleChange3} disabled={this.isDisabled()}/>
-                        <label></label>
-                    </div><br/>                 
+                        <div className="checkbox" >
+                            <label className="" style={{fontSize:"25px",}}>Cuarentena:</label>                           
+                            <Radio toggle type="checkbox"  style={{position:"absolute",marginTop:"10px"}} checked={this.state.isChecked1} onChange={this.toggleChange1}/>
+                            
                         </div>
+                    </Grid.Row>
+                    <Grid.Row>
+                            <label className="" style={{fontSize:"20px"}}>Rígida:</label>                    
+                            <Radio toggle type="checkbox"  style={{position:"relative",marginTop:"5px"}} checked={this.state.isChecked2} onChange={this.toggleChange2} disabled={this.isDisabled()}/>
+                            
+                    </Grid.Row>
+                    <Grid.Row>
+
+                            <label className="" style={{fontSize:"20px"}}>Dinamica:</label>                    
+                            <Radio toggle type="checkbox" style={{position:"relative",marginTop:"5px"}} checked={this.state.isChecked3} onChange={this.toggleChange3} disabled={this.isDisabled()}/>
+                                           
+                    </Grid.Row>
                     
                 </GridColumn>
                 
@@ -1158,7 +1666,7 @@ class Graficos extends Component{
                     
                         <div align="center">
 
-                        <label style={{fontSize:"18px",textAlign:"center"}} >En su localidad respetan el DISTANCIAMIENTO SOCIAL:</label><br/>
+                        <label className="" style={{fontSize:"18px",textAlign:"center"}} >En su localidad respetan el DISTANCIAMIENTO SOCIAL:</label><br/>
                         </div>
                         <div align="center" style={{marginTop:"10px"}}>
 
@@ -1176,7 +1684,7 @@ class Graficos extends Component{
                     <GridColumn>
                     <div align="center">
 
-                        <label style={{fontSize:"18px",textAlign:"center"}} >Indique la cantidad de personas que se automedican:</label><br/>
+                        <label className="" style={{fontSize:"18px",textAlign:"center"}} >Indique la cantidad de personas que se automedican:</label><br/>
                     </div>
                         <div align="center" style={{marginTop:"10px"}}>
 
@@ -1191,10 +1699,27 @@ class Graficos extends Component{
                         </div>
                     </GridColumn>
                     <GridColumn>
-                        
+                    <div align="center">
+
+                        <label className="" style={{fontSize:"18px",textAlign:"center"}} >Cual es la calidad de los hospitales en su ciudad:</label><br/>
+                        </div>
+                        <div align="center" style={{marginTop:"10px"}}>
+
+                        <select id="hq" onChange={()=>this.hospitalQuality(document.getElementById("hq").value)} >
+                            <option value="0" selected>Seleccione una Opcion..</option>
+                            <option value="excelente">excelente</option>
+                            <option value="buena">buena</option>
+                            <option value="regular">regular</option>
+                            <option value="mala">mala</option>
+                            <option value="pesimo">pesimo</option>
+                        </select>
+                    </div>
                     </GridColumn>
                 </Grid>
+                
                 <Footer/>
+                
+                
             </div>
         );
     }

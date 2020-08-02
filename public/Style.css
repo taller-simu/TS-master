@@ -3,6 +3,7 @@
     margin: 0;
 }
 
+/*header*/
 .heads {
     height: 6.6em;
 }
@@ -10,7 +11,7 @@
 .l {
     color: #37d4e9;
     padding: 19px;
-    font-size: 25px;
+    font-size: 24px;
     
 }
 .g .l:active{
@@ -20,17 +21,15 @@
 .g {
     text-align: center;
     transform: translate(-50%, -50%);
-    position: relative;
+    position: absolute;
     top: 50%;
     left: 50%;
     
-
 }
 
 .l:hover {
     background-color: aqua;
-    color: rgb(31, 26, 26);
-    
+    color: rgb(31, 26, 26);    
 }
 
 .title {
@@ -40,16 +39,43 @@
     position: relative;
     top: 50%;
     left: 50%;
-    color: white;
+    color: white;    
+}
+@media (max-width: 812px){
+    .l{
+        font-size: 13px;
+        padding: 5px;;
+    }    
+    .title{
+        font-size: 23px;
+    }
+    .gra-labels{
+        font-size: 10px;
+    }
+    .imag>.log{
+        height: 300px;
+        width: 300px;
+        position: absolute; /* se usa en caso de este div, donde tiene la altura y el ancho definido, sin esto top, right y left no funcionarían */
+        top: 49%; /* sirve en caso de un div como este, donde tiene una altura definida, en caso de que la altura no este definida esta edición no se pone ; */
+        right: 0; /* se debe usar para que margin 0 auto funcione */
+        left: 0; /* se debe usar para que margin 0 auto funcione */
+        margin: 0 auto; /* Esto lo centra */        
+    }
+    .info>.h2{        
+        margin-top: 400px;
+        
+    }
     
 }
-
+/*Home image*/
 .grid-head {
     background-color: #232020;
     position: relative;
-    width: 101%;
+    width: 103%;
     height: 80px;
 }
+
+/*form*/
 .Infectados>input{
     margin: 1px;
 }
@@ -70,4 +96,5 @@
 }
 
 
+/*botton simular*/
 

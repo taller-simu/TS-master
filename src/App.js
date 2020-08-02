@@ -3,7 +3,7 @@ import { HashRouter, Switch, Route } from "react-router-dom";
 import Start from "./start";
 import Graficos from "./graficos";
 import Header from './header';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {Divider} from 'semantic-ui-react';
 import Simular from "./simular";
 

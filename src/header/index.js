@@ -21,7 +21,7 @@ function Header() {
                                                             
                                     <Grid.Column >
                                         <div className="g">
-                                        <NavLink exact activeClassName="main-nav-active" className="l" to="/">Home</NavLink>
+                                        <NavLink exact activeClassName="main-nav-active" className="l" to="/">Inicio</NavLink>
                                         </div>
                                         </Grid.Column>
                                     <Grid.Column>
@@ -31,9 +31,9 @@ function Header() {
                                         </Grid.Column>                                            
                                     <Grid.Column>
                                             <div className="g">
-                                            <NavLink activeClassName="main-nav-active" className="l" to="/Graficos">Graficos</NavLink>
+                                            <NavLink activeClassName="main-nav-active" className="l" to="/Graficos">Gráficos</NavLink>
                                             </div>
-                                        </Grid.Column>   
+                                    </Grid.Column>   
                                                       
                                 </Grid.Row>
                             </Grid>

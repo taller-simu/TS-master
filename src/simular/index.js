@@ -1,18 +1,27 @@
 import React, { Component } from 'react';
-import { Grid, GridColumn, Divider, Button, Input } from 'semantic-ui-react';
-import Footer from '../footer';
+import { Grid, GridColumn, Divider, Input,Accordion,Icon } from 'semantic-ui-react';
+import {Button} from 'react-bootstrap';
 import axios from 'axios';
 import Modals from '../Components/modals';
 
-
 const styles={
     box:{
-        marginTop:20,
-        marginBottom:20,
+        marginTop:"35px",
+        marginBottom:"20px",
+        display:"block",
+        marginLeft: "auto",
+        marginRight: "auto",
         width: 100,
         height: 50,
-        border: '5px solid chocolate',
-        borderRadius: 10
+        border: '5px solid pink',
+        borderRadius: 10,
+        backgroundColor:"",
+    },
+    form:{
+        position:"relative",
+        display:"block",
+        marginLeft: "auto",
+        marginRight: "auto",
     }
 }
 export default class Simular extends Component{
@@ -27,16 +36,15 @@ export default class Simular extends Component{
             show:false,
             show1:false,
             
+            fechaActual:0,
             fechaInicio:0,
             fechaFin:0,
             poblacion:0,
-            dias:0,            
-            municipio:''
-            
-        };  
-        
-    }
-    
+                       
+            municipio:'',
+            activeIndex:-1            
+        };          
+    }    
 
     handleState = (event) => {
         this.setState({
@@ -45,45 +53,40 @@ export default class Simular extends Component{
     }
     
     simular = () => {
-    
-            let suma = (this.state.i2 / this.state.i1) + (this.state.i3 / this.state.i2) +
-                (this.state.i4 / this.state.i3) + (this.state.i5 / this.state.i4) + (this.state.i6 / this.state.i5) +
-                (this.state.i7 / this.state.i6) + (this.state.i8 / this.state.i7) + (this.state.i9 / this.state.i8) +
-                (this.state.i10 / this.state.i9) + (this.state.i11 / this.state.i10) + (this.state.i12 / this.state.i11) +
-                (this.state.i13 / this.state.i12) + (this.state.i14 / this.state.i13) + (this.state.i15 / this.state.i14) +
-                (this.state.i16 / this.state.i15) + (this.state.i17 / this.state.i16) + (this.state.i18 / this.state.i17) +
-                (this.state.i19 / this.state.i18) + (this.state.i20 / this.state.i19);
             
-            let tasai = (suma / 19) + 1;
+            let suma =  (parseInt(this.state.i2) / parseInt(this.state.i1)) + (parseInt(this.state.i3) / parseInt(this.state.i2)) +
+                        (parseInt(this.state.i4) / parseInt(this.state.i3)) + (parseInt(this.state.i5) / parseInt(this.state.i4)) + 
+                        (parseInt(this.state.i6) / parseInt(this.state.i5)) + (parseInt(this.state.i7) / parseInt(this.state.i6)) + 
+                        (parseInt(this.state.i8) / parseInt(this.state.i7)) + (parseInt(this.state.i9) / parseInt(this.state.i8)) +
+                        (parseInt(this.state.i10) / parseInt(this.state.i9)) + (parseInt(this.state.i11) / parseInt(this.state.i10)) + 
+                        (parseInt(this.state.i12) / parseInt(this.state.i11)) + (parseInt(this.state.i13) / parseInt(this.state.i12)) + 
+                        (parseInt(this.state.i14) / parseInt(this.state.i13)) + (parseInt(this.state.i15) / parseInt(this.state.i14)) +
+                        (parseInt(this.state.i16) / parseInt(this.state.i15)) + (parseInt(this.state.i17) / parseInt(this.state.i16)) + 
+                        (parseInt(this.state.i18) / parseInt(this.state.i17)) + (parseInt(this.state.i19) / parseInt(this.state.i18)) +
+                        (parseInt(this.state.i20) / parseInt(this.state.i19));
+            
+            let tasai = (suma / 19);
 
-            let tmortalidad = ((this.state.r1 / this.state.i1) + (this.state.r2 / this.state.i2) + (this.state.r3 / this.state.i3) +
-                (this.state.r4 / this.state.i4) + (this.state.r5 / this.state.i5) + (this.state.r6 / this.state.i6) + (this.state.r7 / this.state.i7) +
-                (this.state.r8 / this.state.i8) + (this.state.r9 / this.state.i9) + (this.state.r10 / this.state.i10) + (this.state.r11 / this.state.i11) +
-                (this.state.r12 / this.state.i12) + (this.state.r13 / this.state.i13) + (this.state.r14 / this.state.i14) + (this.state.r15 / this.state.i15) +
-                (this.state.r16 / this.state.i16) + (this.state.r17 / this.state.i17) + (this.state.r18 / this.state.i18) + (this.state.r19 / this.state.i19) +
-                (this.state.r20 / this.state.i20)) / 20;
+            let E = parseInt(this.state.f1) + parseInt(this.state.f2) + parseInt(this.state.f3) + parseInt(this.state.f4) + parseInt(this.state.f5) +
+                    parseInt(this.state.f6) + parseInt(this.state.f7) + parseInt(this.state.f8) + parseInt(this.state.f9) + parseInt(this.state.f10) +
+                    parseInt(this.state.f11) + parseInt(this.state.f12) + parseInt(this.state.f13) + parseInt(this.state.f14) + 
+                    parseInt(this.state.f15) + parseInt(this.state.f16) + parseInt(this.state.f17) + parseInt(this.state.f18) +
+                    parseInt(this.state.f19) + parseInt(this.state.f20);
 
+            let F = parseInt(this.state.i1)+parseInt(this.state.i2)+parseInt(this.state.i3)+parseInt(this.state.i4)+parseInt(this.state.i5)+parseInt(this.state.i6)+parseInt(this.state.i7)+parseInt(this.state.i8)+
+                    parseInt(this.state.i9)+parseInt(this.state.i10)+parseInt(this.state.i11)+parseInt(this.state.i12)+parseInt(this.state.i13)+parseInt(this.state.i14)+parseInt(this.state.i15)+parseInt(this.state.i16)+
+                    parseInt(this.state.i17)+parseInt(this.state.i18)+parseInt(this.state.i19)+parseInt(this.state.i20);
+
+            let tmortalidad=E/F;
+                   
             let trecuperacion = 1 - tmortalidad;
-            let pis = this.state.poblacion - this.state.i20;
+            let pis = parseInt(this.state.poblacion) - (parseInt(this.state.i20)+parseInt(this.state.r20)+parseInt(this.state.f20));               
             
-            //contador de fechas
-            let fechaactual=new Date();
-            let fechaActual=fechaactual.getFullYear()+"-"+(fechaactual.getMonth()+1)+"-"+fechaactual.getDate()
-            let fechainicio=new Date(fechaActual).getTime();
-            let fechafin=new Date(this.state.fechaFin).getTime();
-            let diasTotales = (fechafin - fechainicio)/(1000*60*60*24);
-            
-            
-            this.enviarDatos(tmortalidad,tasai,trecuperacion,pis,diasTotales,fechaActual);
-            
+            this.enviarDatos(tmortalidad,tasai,trecuperacion,pis);            
         }
 
-        enviarDatos=async(tm,ti,tr,pis,diasTotales,fechaActual)=>{
-           
-            if(Number.isNaN(tm)===true || Number.isNaN(ti)===true || Number.isNaN(tr)===true || pis===0 || diasTotales<1){
-                this.setState({show:true});
-            }
-            else{
+        enviarDatos=async(tm,ti,tr,pis)=>{      
+            
             await axios({
                 method: 'POST',              
                 url: 'https://taller-simu.herokuapp.com/enviardatos',
@@ -91,59 +94,61 @@ export default class Simular extends Component{
                     infectadosinicial:this.state.i20,
                     fallecidosini:this.state.f20,
                     recuperadosini:this.state.r20,
-                    probabilidadContagio:0.17,
+                    probabilidadContagio:0.12,
                     
                     tasaInteraccion:ti,
                     TasaRecuperacion:tr,
                     TasaMortalidad:tm,
 
-                    fechaActual:fechaActual,
+                    fechaActual:this.state.fechaActual,
                     fechaInicio:this.state.fechaInicio,
-                    fechaFin:this.state.fechaFin,
-                    
+                    fechaFin:this.state.fechaFin,                    
 
                     poblacionInicialSusc:pis,                    
                     municipio:this.state.municipio
                 }
                 }).then(response => {
                     console.log("Success ========>", response);
-                    
+                    this.setState({show1:true})                    
                 })
                 .catch(error => {
-                    console.log("Error ========>", error);                   
-                    
+                    console.log("Error ========>", error);
+                    this.setState({show:true});             
                 }
             )
-            this.setState({show1:true})
-            }
-        }          
-          
-    
+            
+        }  
+
+        handleAclick = (e, titleProps) => {
+            const { index } = titleProps
+            const { activeIndex } = this.state
+            const newIndex = activeIndex === index ? -1 : index
+        
+            this.setState({ activeIndex: newIndex })
+        }
+
     render(){
         const showModal=()=>{this.setState({show:false,show1:false})}
-        return(
-        
+        const { activeIndex } = this.state;
+        return(        
             <div>
                   <form id="form" className="formulario">
                 <div className="formularioDiv">
                     <div className="titulo" align="center">
-                        <h1>Insertar los datos historicos para la simulación</h1>
-                                            
-                        <div style={{fontSize:"17px"}}>Introduzca datos de infectados, contagiados y recuperados de 20 dias</div>
-                        </div>
-
-                        <Divider/>
-                        
+                        <h1 style={{backgroundColor:"#7cc4ee"}}>INSERTAR LOS DATOS HISTORICOS DE LA SIMULACION</h1>                                            
+                        <div style={{fontSize:"17px",backgroundColor:"#dadddd",marginTop:"1.5vh"}}><b>Introduzca datos de infectados, recuperados y fallecidos sumados de 20 dias</b></div>
+                    </div>
+                    <Divider/>
                     <Grid columns={3} divided>
                         <GridColumn>
                         <div className="Infectados" align="center" >
                             <h2 className="input-titles">Datos Historicos de Infectados</h2>                            
                             <Input type="number" style={{margin:"-9px"}} name="i1" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
                             <Input type="number" style={{margin:"-9px"}} name="i2" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
-                            <Input type="number" style={{margin:"-9px"}} name="i5" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
                             <Input type="number" style={{margin:"-9px"}} name="i3" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
-                            <Input type="number" style={{margin:"-9px"}} name="i6" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>    
-                            <Input type="number" style={{margin:"-9px"}} name="i4" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                       
+                            <Input type="number" style={{margin:"-9px"}} name="i4" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
+                            <Input type="number" style={{margin:"-9px"}} name="i5" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>    
+                            <Input type="number" style={{margin:"-9px"}} name="i6" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                       
                             <Input type="number" style={{margin:"-9px"}} name="i7" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
                             <Input type="number" style={{margin:"-9px"}} name="i8" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
                             <Input type="number" style={{margin:"-9px"}} name="i9" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
@@ -157,12 +162,9 @@ export default class Simular extends Component{
                             <Input type="number" style={{margin:"-9px"}} name="i17" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
                             <Input type="number" style={{margin:"-9px"}} name="i18" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
                             <Input type="number" style={{margin:"-9px"}} name="i19" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
-                            <Input type="number" style={{margin:"-9px"}} name="i20" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
-                            
-                                                
+                            <Input type="number" style={{margin:"-9px"}} name="i20" placeholder="infectados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                                        
                         </div>
                     </GridColumn>
-
                     <GridColumn>
                         <div className="Recuperados" align="center" >
                             <h2 className="input-titles">Datos Historicos de Recuperados</h2>
@@ -185,11 +187,9 @@ export default class Simular extends Component{
                             <Input type="number" style={{margin:"-9px"}} name="r17" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
                             <Input type="number" style={{margin:"-9px"}} name="r18" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
                             <Input type="number" style={{margin:"-9px"}} name="r19" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
-                            <Input type="number" style={{margin:"-9px"}} name="r20" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
-                            
+                            <Input type="number" style={{margin:"-9px"}} name="r20" placeholder="recuperados" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                            
                         </div>
                     </GridColumn>
-
                     <GridColumn>
                         <div className="Fallecidos" align="center">
                             <h2 className="input-titles">Datos Historicos de Fallecidos</h2>
@@ -212,52 +212,141 @@ export default class Simular extends Component{
                             <Input type="number" style={{margin:"-9px"}} name="f17" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
                             <Input type="number" style={{margin:"-9px"}} name="f18" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
                             <Input type="number" style={{margin:"-9px"}} name="f19" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                        
-                            <Input type="number" style={{margin:"-9px"}} name="f20" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>
-                            
+                            <Input type="number" style={{margin:"-9px"}} name="f20" placeholder="fallecidos" onChange={(e)=>this.handleState(e)} required fluid focus/><br/>                            
                         </div>
                     </GridColumn>                    
                     </Grid>
                     <Divider/>
-
                 </div>
             <Modals
                 show={this.state.show}
                 onHide={showModal}
-                msg="Introduzca todos los datos Correctamente"
+                msg="Introduzca todos los datos correctamente"
                 f=""
             />
             <Modals
                 show={this.state.show1}
                 onHide={showModal}
-                msg="Datos agregados con exito dirigase a Graficos"
-                f=""
+                msg="Datos agregados con exito dirigase a "
+                f=" Gráficos"
             />
-            </form>
-            <div className="form" align="center" style={{backgroundColor:"rgb(57, 227, 57)"}}>
+            </form>  
+            <div style={{backgroundColor:"#7cc4ee",marginBottom:"10px"}}>          
+            <Grid columns={2} doubling>
+                <GridColumn align="center">
+                    <div  >                        
+                        <Accordion>
+                            <Accordion.Title
+                            active={activeIndex === 0}
+                            index={0}
+                            onClick={this.handleAclick}
+                            style={{fontSize:"25px",marginBottom:"-30px",marginTop:"20px"}}
+                            >
+                            <Icon name='dropdown' />
+                            Introduzca el nombre del municipio:
+                            </Accordion.Title>
+                            <Accordion.Content active={activeIndex === 0} style={{fontSize:"20px"}}>
+                            <p>
+                                Para tener registro de cada region del pais
+                            </p>
+                            </Accordion.Content>  
+                        </Accordion>
+                        <Input type="text"  name="municipio" placeholder="municipio" onChange={(e)=>this.handleState(e)} required icon="flag" focus/><br/>  
+                        
+                        <Accordion>
+                            <Accordion.Title
+                            active={activeIndex === 1}
+                            index={1}
+                            onClick={this.handleAclick}
+                            style={{fontSize:"25px",marginBottom:"-30px",marginTop:"20px"}}
+                            >
+                            <Icon name='dropdown' />
+                                Introduzca la poblacion total del Municipio:
+                            </Accordion.Title>
+                            <Accordion.Content active={activeIndex === 1} style={{fontSize:"20px"}}>
+                            <p>
+                                Ultima vez censado
+                            </p>
+                            </Accordion.Content>  
+                        </Accordion>                        
+                        <Input type="number"  name="poblacion" placeholder="poblacion" onChange={(e)=>this.handleState(e)} required icon="group" focus/><br/>                        
                 
-                <label style={{fontSize:20,marginTop:20}}>Introduzca Nombre de Municipio: </label>
-                <Input type="text"  name="municipio" placeholder="municipio" onChange={(e)=>this.handleState(e)} required icon="flag" focus/><br/>  
+                    </div>
+                </GridColumn>
+                <GridColumn align="center">
+                    <div >
+                    <Accordion>
+                            <Accordion.Title
+                            active={activeIndex === 2}
+                            index={2}
+                            onClick={this.handleAclick}
+                            style={{fontSize:"25px",marginBottom:"-30px",marginTop:"20px"}}
+                            >
+                            <Icon name='dropdown' />
+                            Introduzca la fecha del ultimo dato registrado:
+                            </Accordion.Title>
+                            <Accordion.Content active={activeIndex === 2} style={{fontSize:"20px"}}>
+                            <p>
+                                La fecha del ultimo dato registrado oficialmente para la base de datos
+                            </p>
+                            </Accordion.Content>  
+                        </Accordion>                 
+                         <Input type="date"  name="fechaActual" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
 
-                <label style={{fontSize:20}}>Introduzca la poblacion total del Municipio: </label> 
-                <Input type="number"  name="poblacion" placeholder="poblacion" onChange={(e)=>this.handleState(e)} required icon="group" focus/><br/>
-
-                <label style={{fontSize:20}}>Introduzca la fecha de iniciode la simulacion: </label> 
-                <Input type="date"  name="fechaInicio" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
-
-                <label style={{fontSize:20}}>Introduzca la fecha fin de la simulacion: </label> 
+                         <Accordion>
+                            <Accordion.Title
+                            active={activeIndex === 3}
+                            index={3}
+                            onClick={this.handleAclick}
+                            style={{fontSize:"25px",marginBottom:"-30px",marginTop:"20px"}}
+                            >
+                            <Icon name='dropdown' />
+                                Introduzca la fecha de inicio de la simulacion:
+                            </Accordion.Title>
+                            <Accordion.Content active={activeIndex === 3} style={{fontSize:"20px"}}>
+                            <p>
+                                La fecha en la que quiere que se muestre los graficos
+                            </p>
+                            </Accordion.Content>  
+                        </Accordion>                  
+                        <Input type="date"  name="fechaInicio" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
+                        
+                    </div>
+                </GridColumn>
+            </Grid>
+                <div align="center" >
+                        <Accordion>
+                            <Accordion.Title
+                            active={activeIndex === 4}
+                            index={4}
+                            onClick={this.handleAclick}
+                            style={{fontSize:"25px",marginBottom:"-30px",marginTop:"20px"}}
+                            >
+                            <Icon name='dropdown' />
+                                Introduzca la fecha fin de la simulacion:
+                            </Accordion.Title>
+                            <Accordion.Content active={activeIndex === 4} style={{fontSize:"20px"}}>
+                            <p>
+                                Fecha hasta el dia que quiere que se vea en los graficos
+                            </p>
+                            </Accordion.Content>  
+                        </Accordion>      
+               
                 <Input type="date"  name="fechaFin" placeholder="fecha" onChange={(e)=>this.handleState(e)} required/><br/>
-
-                
-                <Button style={styles.box} onClick={()=>this.simular()}>iniciar</Button>
-                
+                <Divider/>
+            </div>
             </div>
             
-        <Footer/>
-            </div>
-        );
-        
-    }
-    
+            
+            <div style={{backgroundColor:"#dadddd"}}>
+                <Button style={styles.box} onClick={()=>this.simular()}>iniciar</Button>
+            </div>  
+            <Divider/>     
+            <Divider/>
+            
+        </div>
+        );        
+    }    
 }
 
 

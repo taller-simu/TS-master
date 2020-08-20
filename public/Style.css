@@ -56,7 +56,7 @@
         height: 300px;
         width: 300px;
         position: absolute; /* se usa en caso de este div, donde tiene la altura y el ancho definido, sin esto top, right y left no funcionarían */
-        top: 49%; /* sirve en caso de un div como este, donde tiene una altura definida, en caso de que la altura no este definida esta edición no se pone ; */
+        top: 51%; /* sirve en caso de un div como este, donde tiene una altura definida, en caso de que la altura no este definida esta edición no se pone ; */
         right: 0; /* se debe usar para que margin 0 auto funcione */
         left: 0; /* se debe usar para que margin 0 auto funcione */
         margin: 0 auto; /* Esto lo centra */        
@@ -66,6 +66,10 @@
     }
     .input-titles{
         font-size: 20px;
+    }
+    .simu{
+        position: relative;
+        margin-left: 0vh;
     }
     
 }
@@ -97,6 +101,23 @@
     color: rgb(31, 26, 26);
 }
 
-
-/*botton simular*/
-
+.footer{
+    
+   position:fixed;
+   margin-top: 40px;
+   left:0px;
+   bottom:0px;
+   height:40px;
+   width:100%;
+   background:#999;
+    
+}
+.dedicatoria{
+        text-align: center;
+        position: absolute; /* se usa en caso de este div, donde tiene la altura y el ancho definido, sin esto top, right y left no funcionarían */
+        top: 51%; /* sirve en caso de un div como este, donde tiene una altura definida, en caso de que la altura no este definida esta edición no se pone ; */
+        right: 0; /* se debe usar para que margin 0 auto funcione */
+        left: 0; /* se debe usar para que margin 0 auto funcione */
+        margin: 0 auto; /* Esto lo centra */  
+}
+/*form simular*/

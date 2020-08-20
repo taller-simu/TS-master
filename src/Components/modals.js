@@ -1,4 +1,4 @@
-import React, {Component}from 'react';
+import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
@@ -13,7 +13,7 @@ const Modals=(props)=>{
       >
         
         <Modal.Body>
-          <h2>{props.msg}{props.f}</h2>
+          <h2>{props.msg}<b>{props.f}</b></h2>
         </Modal.Body>
         <Modal.Footer>
             <Button onClick={props.onHide}>Close</Button>

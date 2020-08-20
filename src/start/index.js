@@ -17,7 +17,7 @@ function start() {
         </div>
               <div className="autor">
                 <address>
-                Escrito por: Estudiantes SISTEMAS.<br />
+                Desarrollado por: Estudiantes de SISTEMAS.<br />
                 Email: <a href="mailto:villca.fuentes23@gmail.com">villca.fuentes23@gmail.com</a><br />
                 Email: <a href="mailto:portugalm6@gmail.com">portugalm6@gmail.com</a><br />
                 Email: <a href="mailto:alevargasmory@gmail.com">alevargasmory@gmail.com</a><br />
@@ -32,8 +32,8 @@ function start() {
                          </div>
               </div>
 
-                                <div className="imag">
-                                    <img className="log" align="center" src={covid} width="550" height="450" bordered/>
+                                <div className="imag" >
+                                    <img className="log" align="center" src={covid} width="550" height="450" bordered href="https://www.w3schools.com"/>
 
                                 </div>
 
@@ -52,8 +52,8 @@ function start() {
                                               </h2>     
                                         </div>
                               <div className="redesociales">
-                                      
-                                                      <img className="log" src={facebook} target="black" width="80" height="80"/>
+
+                                                      <img className="log" src={facebook} target="black" width="80" height="80" />
                                                       <img className="log1" src={youtube} target="black" width="80" height="80"/>
                                                       <img className="log" src={twitter} target="black" width="80" height="80"/>
                                   
